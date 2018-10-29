@@ -15,7 +15,7 @@ class TestRawLogParser():
         assert raw_log_parser.parse(log_line) == expectation
 
     def test_bad_line(self):
-        log_line = "Oct 26 03:25:02 slave2.ldap.mdc1.mozilla.com slapd[11086]: connection_read(26): no connection!"
+        log_line = "Oct 26 03:25:02 ldap.example.com slapd[11086]: connection_read(26): no connection!"
         raw_log_parser = RawLogParser()
 
         assert raw_log_parser.parse(log_line) == None
