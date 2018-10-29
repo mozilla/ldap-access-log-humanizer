@@ -12,6 +12,18 @@ class Connection:
         self.verb = ""
         self.verb_details = ""
 
+    def log(self):
+        return {"conn_id": self.conn_id,
+                "tls": self.tls,
+                "client": self.client,
+                "server": self.server,
+                "process": self.process,
+                "time": self.time,
+                "fd": self.fd,
+                "op": self.op,
+                "verb": self.verb,
+                "verb_details": self.verb_details}
+
     # Something happened, this method's job is to update the context
     def add_event(self, event):
         self.time = event['time']
@@ -26,8 +38,10 @@ class Connection:
 
         if match:
             self.client = match[1]
-        else:
-            raise Exception('Failed to parse: {}'.format(verb_details))
+
+    def add_tls(self, verb_details):
+        if verb_details.startswith('established'):
+            self.tls = True
 
     def add_rest(self, rest):
         self.fd = ""
@@ -50,8 +64,12 @@ class Connection:
             self.verb = match[3]
             self.verb_details = match[4]
 
+            # Some verbs have a special impact on a connection, so
+            # we handle those here to update that context.
             if self.verb == "ACCEPT":
                 self.add_accept(self.verb_details)
+            elif self.verb == "TLS":
+                self.add_tls(self.verb_details)
 
         else:
             raise Exception('Failed to parse: {}'.format(rest))
