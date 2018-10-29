@@ -16,6 +16,8 @@ class Connection:
         return {"conn_id": self.conn_id,
                 "tls": self.tls,
                 "client": self.client,
+                "server": self.server,
+                "process": self.process,
                 "time": self.time,
                 "fd": self.fd,
                 "op": self.op,
@@ -36,8 +38,6 @@ class Connection:
 
         if match:
             self.client = match[1]
-        else:
-            raise Exception('Failed to parse: {}'.format(verb_details))
 
     def add_tls(self, verb_details):
         if verb_details.startswith('established'):
