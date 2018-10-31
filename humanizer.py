@@ -29,7 +29,7 @@ with open(args.file) as fp:
             connection.add_event(event)
 
             # If the connection is closed, remove from active connections
-            if connection.verb == "closed":
+            if connection.closed():
                 connections.pop(event['conn'])
 
             print(connection.log())

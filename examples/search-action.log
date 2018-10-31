@@ -1,0 +1,16 @@
+Oct 26 03:30:53 ldap.example.com slapd[11086]: conn=6832973 fd=24 ACCEPT from IP=192.168.1.1:43050 (IP=0.0.0.0:389)
+Oct 26 03:30:53 ldap.example.com slapd[11086]: conn=6832973 op=0 EXT oid=1.3.6.1.4.1.1466.20037
+Oct 26 03:30:53 ldap.example.com slapd[11086]: conn=6832973 op=0 STARTTLS
+Oct 26 03:30:53 ldap.example.com slapd[11086]: conn=6832973 op=0 RESULT oid= err=0 text=
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 fd=24 TLS established tls_ssf=256 ssf=256
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=1 BIND dn="uid=bind-generateusers,ou=logins,dc=example" method=128
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=1 BIND dn="uid=bind-generateusers,ou=logins,dc=example" mech=SIMPLE ssf=0
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=1 RESULT tag=97 err=0 text=
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=2 SRCH base="ou=groups,dc=example" scope=2 deref=0 filter="(cn=group_name)"
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=2 SRCH attr=memberUid
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=2 SEARCH RESULT tag=101 err=0 nentries=1 text=
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=3 SRCH base="o=net,dc=example" scope=2 deref=0 filter="(objectClass=posixAccount)"
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=3 SRCH attr=sshPublicKey loginShell homeDirectory mail uidNumber uid
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=3 SEARCH RESULT tag=101 err=0 nentries=1626 text=
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 op=4 UNBIND
+Oct 26 03:30:54 ldap.example.com slapd[11086]: conn=6832973 fd=24 closed
