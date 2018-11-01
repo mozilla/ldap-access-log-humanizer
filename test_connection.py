@@ -73,3 +73,32 @@ class TestConnection():
         assert len(connection.file_descriptors) == 1
         assert len(connection.operations) == 0
         assert connection.closed() == True
+
+    def test_dict(self):
+        event = {'time': "now",
+                 'server': "foo.example.com",
+                 'process': "slapd[1]",
+                 'rest': 'fd=34 ACCEPT from IP=192.168.1.1:56822 (IP=0.0.0.0:389)'}
+
+        connection = Connection(1245)
+        connection.add_event(event)
+
+        assert connection.conn_id == 1245
+        assert len(connection.file_descriptors) == 1
+        assert len(connection.operations) == 0
+
+        assert connection.dict() == {'client': '192.168.1.1',
+                                     'conn_id': 1245,
+                                     'server': 'foo.example.com',
+                                     'time': 'now',
+                                     'tls': False}
+
+        file_descriptor = connection.file_descriptors[0]
+        assert connection.log(file_descriptor.dict()) == {'client': '192.168.1.1',
+                                                          'conn_id': 1245,
+                                                          'details': 'from IP=192.168.1.1:56822 (IP=0.0.0.0:389)',
+                                                          'fd_id': 34,
+                                                          'server': 'foo.example.com',
+                                                          'time': 'now',
+                                                          'tls': False,
+                                                          'verb': 'ACCEPT'}

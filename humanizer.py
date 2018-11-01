@@ -32,11 +32,9 @@ with open(args.file) as fp:
             if connection.closed():
                 connections.pop(event['conn'])
 
-            print(connection.log())
         # If it's a new connection, just create one and start tracking
         else:
             # print("New connection: {}".format(str(event['conn'])))
             connection = Connection(event['conn'])
             connection.add_event(event)
             connections[event['conn']] = connection
-            print(connection.log())

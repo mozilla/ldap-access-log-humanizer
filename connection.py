@@ -7,8 +7,25 @@ class Connection:
     def __init__(self, conn_id):
         self.conn_id = conn_id
         self.time = ""
+        self.server = ""
+        self.process = ""
         self.operations = {}
         self.file_descriptors = []
+
+    def dict(self):
+        return {
+            "conn_id": self.conn_id,
+            "time": self.time,
+            "client": self.client(),
+            "server": self.server,
+            "tls": self.tls()
+        }
+
+    def log(self, event_dict):
+        combined_dict = {}
+        combined_dict.update(self.dict())
+        combined_dict.update(event_dict)
+        return combined_dict
 
     def tls(self):
         for file_descriptor in self.file_descriptors:
@@ -29,7 +46,8 @@ class Connection:
             if file_descriptor.verb == "ACCEPT":
                 pattern = r'from IP=(\d+\.\d+\.\d+\.\d+):'
                 match = re.search(pattern, file_descriptor.details)
-                return match[1]
+                if match:
+                    return match[1]
 
         return ""
 
@@ -52,6 +70,9 @@ class Connection:
                 operation = Operation(int(op_id))
                 operation.add_event(match[2])
                 self.operations[int(op_id)] = operation
+
+            if operation.loggable():
+                print(self.log(operation.dict()))
         else:
             raise Exception('Malformed operation: {}'.format(rest))
 
@@ -66,6 +87,9 @@ class Connection:
             file_descriptor = FileDescriptor(int(match[1]))
             file_descriptor.add_event(match[2])
             self.file_descriptors.append(file_descriptor)
+
+            if file_descriptor.loggable():
+                print(self.log(file_descriptor.dict()))
         else:
             raise Exception('Malformed file file_descriptor: {}'.format(rest))
 

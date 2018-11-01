@@ -13,5 +13,9 @@ class FileDescriptor:
         return {
             "fd_id": self.fd_id,
             "verb": self.verb,
-            "details": sorted(list(self.details))
+            "details": self.details
         }
+
+    def loggable(self):
+        # We always want to log fd
+        return True

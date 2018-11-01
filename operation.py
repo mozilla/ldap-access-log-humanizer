@@ -99,8 +99,7 @@ LDAP_ERROR_CODES = {
 class Operation:
     def __init__(self, op_id):
         self.op_id = op_id
-        self.request_verb = ""
-        self.request_verb_details = set()
+        self.requests = []
         self.response_verb = ""
         self.response_verb_details = set()
         self.error = ""
@@ -120,9 +119,9 @@ class Operation:
     def add_event(self, rest):
         tokenized_rest = rest.split(" ")
 
-        if tokenized_rest[0] in ["BIND", "SRCH"]:
-            self.request_verb = tokenized_rest[0]
-            self.request_verb_details.update(tokenized_rest[1:])
+        if tokenized_rest[0] in ["BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]:
+            self.requests.append(
+                {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
         elif tokenized_rest[0] == "RESULT":
             self.response_verb = "RESULT"
             self.response_verb_details.update(tokenized_rest[1:])
@@ -138,13 +137,16 @@ class Operation:
     def dict(self):
         return {
             "op_id": self.op_id,
-            "request": {
-                "verb": self.request_verb,
-                "details": sorted(list(self.request_verb_details))
-            },
+            "requests": self.requests,
             "response": {
                 "verb": self.response_verb,
                 "details": sorted(list(self.response_verb_details)),
-                "error": ""
-            }
-        }
+                "error": self.error
+            }}
+
+    def loggable(self):
+        # We only want to log op, when we have a result/response
+        if self.response_verb == "":
+            return False
+        else:
+            return True
