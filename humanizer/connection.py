@@ -1,6 +1,6 @@
 import re
-from file_descriptor import FileDescriptor
-from operation import Operation
+from humanizer.file_descriptor import FileDescriptor
+from humanizer.operation import Operation
 
 
 class Connection:
