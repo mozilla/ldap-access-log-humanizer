@@ -120,8 +120,12 @@ class Operation:
         tokenized_rest = rest.split(" ")
 
         if tokenized_rest[0] in ["BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]:
-            self.requests.append(
-                {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+            if len(self.requests) > 0:
+                if tokenized_rest[0] == self.requests[0]["verb"]:
+                    self.requests[0]["details"].extend(tokenized_rest[1:])
+            else:
+                self.requests.append(
+                    {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
         elif tokenized_rest[0] == "RESULT":
             self.response_verb = "RESULT"
             self.response_verb_details.update(tokenized_rest[1:])
