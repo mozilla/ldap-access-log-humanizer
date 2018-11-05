@@ -35,8 +35,7 @@ class TestOperation():
 
         assert isinstance(operation, Operation)
         assert operation.op_id == 0
-        assert operation.requests == [{"verb": "BIND", "details": ['dn="uid=bind-generateusers,ou=logins,dc=example"', 'method=128']},
-                                      {"verb": "BIND", "details": ['dn="uid=bind-generateusers,ou=logins,dc=example"', 'mech=SIMPLE', 'ssf=0']}]
+        assert operation.requests == [{"verb": "BIND", "details": ['dn="uid=bind-generateusers,ou=logins,dc=example"', 'method=128', 'mech=SIMPLE', 'ssf=0']}]
         assert operation.response_verb == ""
         assert operation.response_verb_details == set()
 
@@ -56,11 +55,6 @@ class TestOperation():
             {'details': [
                 'dn="uid=bind-generateusers,ou=logins,dc=example"',
                 'method=128'
-            ],
-                'verb': 'BIND'
-            },
-            {'details': [
-                'dn="uid=bind-generateusers,ou=logins,dc=example"',
                 'mech=SIMPLE',
                 'ssf=0'
             ],
@@ -75,11 +69,6 @@ class TestOperation():
                                         {'details': [
                                             'dn="uid=bind-generateusers,ou=logins,dc=example"',
                                             'method=128'
-                                        ],
-                                            'verb': 'BIND'
-                                        },
-                                        {'details': [
-                                            'dn="uid=bind-generateusers,ou=logins,dc=example"',
                                             'mech=SIMPLE',
                                             'ssf=0'
                                         ],
@@ -114,11 +103,6 @@ class TestOperation():
                     'scope=2',
                     'deref=0',
                     'filter="(cn=group_name)"'
-                ],
-                'verb': 'SRCH'
-            },
-            {
-                'details': [
                     'attr=memberUid'
                 ],
                 'verb': 'SRCH'
