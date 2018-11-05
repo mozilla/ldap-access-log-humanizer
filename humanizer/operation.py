@@ -123,7 +123,7 @@ class Operation:
             if len(self.requests) > 0:
                 if tokenized_rest[0] == self.requests[0]["verb"]:
                     self.requests[0]["details"].extend(tokenized_rest[1:])
-                    self.requests[0]["details"] = set(self.requests[0]["details"])
+                    self.requests[0]["details"] = list(set(self.requests[0]["details"]))
             else:
                 self.requests.append(
                     {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
