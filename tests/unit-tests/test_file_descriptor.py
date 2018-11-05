@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from file_descriptor import FileDescriptor
 import re
+from humanizer.file_descriptor import FileDescriptor
 
 
 class TestFileDescriptor():

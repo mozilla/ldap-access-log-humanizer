@@ -1,6 +1,9 @@
 #!/usr/bin/env python
-from connection import Connection
 import re
+import pytest
+import sys
+import os
+from humanizer.connection import Connection
 
 
 class TestConnection():
