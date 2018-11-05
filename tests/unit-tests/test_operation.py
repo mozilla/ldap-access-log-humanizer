@@ -54,7 +54,7 @@ class TestOperation():
         assert operation.requests == [
             {'details': [
                 'dn="uid=bind-generateusers,ou=logins,dc=example"',
-                'method=128'
+                'method=128',
                 'mech=SIMPLE',
                 'ssf=0'
             ],
@@ -102,7 +102,7 @@ class TestOperation():
                     'base="ou=groups,dc=example"',
                     'scope=2',
                     'deref=0',
-                    'filter="(cn=group_name)"'
+                    'filter="(cn=group_name)"',
                     'attr=memberUid'
                 ],
                 'verb': 'SRCH'
