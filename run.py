@@ -1,6 +1,5 @@
 import argparse
-from rawlogparser import RawLogParser
-from connection import Connection
+import humanizer
 
 parser = argparse.ArgumentParser(
     description='Humanize (or flatten) an open-ldap log.')
@@ -29,14 +28,12 @@ with open(args.file) as fp:
             connection.add_event(event)
 
             # If the connection is closed, remove from active connections
-            if connection.verb == "closed":
+            if connection.closed():
                 connections.pop(event['conn'])
 
-            print(connection.log())
         # If it's a new connection, just create one and start tracking
         else:
             # print("New connection: {}".format(str(event['conn'])))
             connection = Connection(event['conn'])
             connection.add_event(event)
             connections[event['conn']] = connection
-            print(connection.log())

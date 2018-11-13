@@ -96,30 +96,13 @@ LDAP_ERROR_CODES = {
 }
 
 
-class Connection:
-    def __init__(self, conn_id):
-        self.conn_id = conn_id
-        self.tls = False
-        self.client = ""
-        self.time = ""
-        self.fd = ""
-        self.op = ""
-        self.verb = ""
-        self.verb_details = ""
+class Operation:
+    def __init__(self, op_id):
+        self.op_id = op_id
+        self.requests = []
+        self.response_verb = ""
+        self.response_verb_details = set()
         self.error = ""
-
-    def log(self):
-        return {"conn_id": self.conn_id,
-                "tls": self.tls,
-                "client": self.client,
-                "server": self.server,
-                "process": self.process,
-                "time": self.time,
-                "fd": self.fd,
-                "op": self.op,
-                "verb": self.verb,
-                "verb_details": self.verb_details,
-                "error": self.error}
 
     def add_error(self, rest):
         # clear prior errors, to make sure we're in sync
@@ -133,53 +116,37 @@ class Connection:
         if match:
             self.error = LDAP_ERROR_CODES[int(match[1])]
 
-    # Something happened, this method's job is to update the context
-    def add_event(self, event):
-        self.time = event['time']
-        self.server = event['server']
-        self.process = event['process']
-        self.add_rest(event['rest'])
-        self.add_error(event['rest'])
+    def add_event(self, rest):
+        tokenized_rest = rest.split(" ")
 
-    def add_accept(self, verb_details):
-       # Example: from IP=192.168.1.1:56822 (IP=0.0.0.0:389)
-        pattern = r'^from IP=(\d+\.\d+\.\d+\.\d+)'
-        match = re.search(pattern, verb_details)
-
-        if match:
-            self.client = match[1]
-
-    def add_tls(self, verb_details):
-        if verb_details.startswith('established'):
-            self.tls = True
-
-    def add_rest(self, rest):
-        self.fd = ""
-        self.op = ""
-        self.verb = ""
-        self.verb_details = ""
-
-        # Example: fd=34 ACCEPT ...
-        pattern = r'^(\w+)=(\d+) (\w+)\s?(.*)$'
-        match = re.search(pattern, rest)
-
-        if match:
-            if match[1] == 'fd':
-                self.fd = int(match[2])
-            elif match[1] == 'op':
-                self.op = int(match[2])
-            else:
-                raise Exception('Unsupported option: {}'.format(match[1]))
-
-            self.verb = match[3]
-            self.verb_details = match[4]
-
-            # Some verbs have a special impact on a connection, so
-            # we handle those here to update that context.
-            if self.verb == "ACCEPT":
-                self.add_accept(self.verb_details)
-            elif self.verb == "TLS":
-                self.add_tls(self.verb_details)
-
+        if tokenized_rest[0] in ["BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]:
+            self.requests.append(
+                {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+        elif tokenized_rest[0] == "RESULT":
+            self.response_verb = "RESULT"
+            self.response_verb_details.update(tokenized_rest[1:])
+        elif tokenized_rest[0] == "SEARCH" and tokenized_rest[1] == "RESULT":
+            self.response_verb = "SEARCH RESULT"
+            self.response_verb_details.update(tokenized_rest[2:])
         else:
-            raise Exception('Failed to parse: {}'.format(rest))
+            # This is just a catch all until we exhaust the supported verbs
+            raise Exception('Unsupported VERB in: {}'.format(rest))
+
+        self.add_error(rest)
+
+    def dict(self):
+        return {
+            "op_id": self.op_id,
+            "requests": self.requests,
+            "response": {
+                "verb": self.response_verb,
+                "details": sorted(list(self.response_verb_details)),
+                "error": self.error
+            }}
+
+    def loggable(self):
+        # We only want to log op, when we have a result/response
+        if self.response_verb == "":
+            return False
+        else:
+            return True
