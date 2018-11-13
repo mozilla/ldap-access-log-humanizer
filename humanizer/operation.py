@@ -117,7 +117,7 @@ class Operation:
             self.error = LDAP_ERROR_CODES[int(match.group(1))]
 
     def add_event(self, rest):
-        verbs = ["BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]
+        verbs = ["ABANDON", "ADD", "MOD", "PASSMOD", "BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]
         tokenized_rest = rest.split(" ")
 
         if tokenized_rest[0] in verbs:
@@ -141,6 +141,9 @@ class Operation:
                         self.requests[0]["details"].extend(tokenized_rest[1:])
                         self.requests[0]["details"] = list(
                             set(self.requests[0]["details"]))
+                else:
+                    self.requests.append(
+                        {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
             else:
                 self.requests.append(
                     {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
