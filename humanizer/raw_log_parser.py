@@ -9,11 +9,11 @@ class RawLogParser:
         match = re.search(pattern, line)
 
         if match:
-            return {'time': match[1],
-                    'server': match[2],
-                    'process': match[3],
-                    'conn': match[4],
-                    'rest': match[5]}
+            return {'time': match.group(1),
+                    'server': match.group(2),
+                    'process': match.group(3),
+                    'conn': match.group(4),
+                    'rest': match.group(5)}
         else:
             #raise Exception('Failed to parse raw line: {}'.format(line))
             print("ERROR: Failed to parse raw line: {}".format(line))
