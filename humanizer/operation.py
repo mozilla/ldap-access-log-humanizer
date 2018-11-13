@@ -135,10 +135,12 @@ class Operation:
                             else:
                                 attrs.append(attr)
                         print(attrs)
-                        self.requests[0]["details"].append('attrs=' + ",".join(attrs))
+                        self.requests[0]["details"].append(
+                            'attrs=' + ",".join(attrs))
                     else:
                         self.requests[0]["details"].extend(tokenized_rest[1:])
-                        self.requests[0]["details"] = list(set(self.requests[0]["details"]))
+                        self.requests[0]["details"] = list(
+                            set(self.requests[0]["details"]))
             else:
                 self.requests.append(
                     {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
@@ -151,6 +153,10 @@ class Operation:
         else:
             # This is just a catch all until we exhaust the supported verbs
             raise Exception('Unsupported VERB in: {}'.format(rest))
+
+        # Sort the requests details, to make it more deterministic
+        for request in self.requests:
+            request["details"] = sorted(request["details"])
 
         self.add_error(rest)
 
