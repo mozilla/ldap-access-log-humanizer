@@ -1,5 +1,6 @@
 import argparse
-import humanizer
+from humanizer import RawLogParser
+from humanizer import Connection
 
 parser = argparse.ArgumentParser(
     description='Humanize (or flatten) an open-ldap log.')

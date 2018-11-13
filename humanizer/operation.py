@@ -117,11 +117,31 @@ class Operation:
             self.error = LDAP_ERROR_CODES[int(match[1])]
 
     def add_event(self, rest):
+        verbs = ["BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]
         tokenized_rest = rest.split(" ")
 
-        if tokenized_rest[0] in ["BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]:
-            self.requests.append(
-                {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+        if tokenized_rest[0] in verbs:
+            # If we get two lines of log output with the same operation and the same verb, it's a continuation,
+            # so check if we've already processed one
+            if len(self.requests) > 0:
+                if tokenized_rest[0] == self.requests[0]["verb"]:
+                    # Our splitting on space character doesn't work for attr list in a SRCH operation,
+                    # so we need to treat those lines differently, and create a list of attributes
+                    if tokenized_rest[1:][0].startswith("attr="):
+                        attrs = []
+                        for attr in tokenized_rest[1:]:
+                            if "=" in attr:
+                                attrs.append(attr.split("=")[1])
+                            else:
+                                attrs.append(attr)
+                        print(attrs)
+                        self.requests[0]["details"].append('attrs=' + ",".join(attrs))
+                    else:
+                        self.requests[0]["details"].extend(tokenized_rest[1:])
+                        self.requests[0]["details"] = list(set(self.requests[0]["details"]))
+            else:
+                self.requests.append(
+                    {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
         elif tokenized_rest[0] == "RESULT":
             self.response_verb = "RESULT"
             self.response_verb_details.update(tokenized_rest[1:])
