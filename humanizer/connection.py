@@ -47,7 +47,7 @@ class Connection:
                 pattern = r'from IP=(\d+\.\d+\.\d+\.\d+):'
                 match = re.search(pattern, file_descriptor.details)
                 if match:
-                    return match[1]
+                    return match.group(1)
 
         return ""
 
@@ -59,16 +59,16 @@ class Connection:
         match = re.search(pattern, rest)
 
         if match:
-            op_id = match[1]
+            op_id = match.group(1)
             operation = self.operations.get(int(op_id))
 
             # if an existing operation, update it's context
             if operation:
-                operation.add_event(match[2])
+                operation.add_event(match.group(2))
             # if a new operation, add it to our operations list
             else:
                 operation = Operation(int(op_id))
-                operation.add_event(match[2])
+                operation.add_event(match.group(2))
                 self.operations[int(op_id)] = operation
 
             if operation.loggable():
@@ -84,8 +84,8 @@ class Connection:
         match = re.search(pattern, rest)
 
         if match:
-            file_descriptor = FileDescriptor(int(match[1]))
-            file_descriptor.add_event(match[2])
+            file_descriptor = FileDescriptor(int(match.group(1)))
+            file_descriptor.add_event(match.group(2))
             self.file_descriptors.append(file_descriptor)
 
             if file_descriptor.loggable():
