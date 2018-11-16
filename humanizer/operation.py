@@ -117,7 +117,7 @@ class Operation:
             self.error = LDAP_ERROR_CODES[int(match.group(1))]
 
     def add_event(self, rest):
-        verbs = ["ABANDON", "ADD", "MOD", "PASSMOD", "BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]
+        verbs = ["ADD", "MOD", "PASSMOD", "BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]
         tokenized_rest = rest.split(" ")
 
         if tokenized_rest[0] in verbs:
@@ -134,7 +134,6 @@ class Operation:
                                 attrs.append(attr.split("=")[1])
                             else:
                                 attrs.append(attr)
-                        print(attrs)
                         self.requests[0]["details"].append(
                             'attrs=' + ",".join(attrs))
                     else:
@@ -153,6 +152,10 @@ class Operation:
         elif tokenized_rest[0] == "SEARCH" and tokenized_rest[1] == "RESULT":
             self.response_verb = "SEARCH RESULT"
             self.response_verb_details.update(tokenized_rest[2:])
+        elif tokenized_rest[0] == "ABANDON":
+            self.requests.append(
+                {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+            self.response_verb = "None"
         else:
             # This is just a catch all until we exhaust the supported verbs
             raise Exception('Unsupported VERB in: {}'.format(rest))
