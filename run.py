@@ -1,4 +1,5 @@
 import argparse
+import sys
 from humanizer import RawLogParser
 from humanizer import Connection
 
@@ -10,31 +11,35 @@ args = parser.parse_args()
 # Used for connection tracking
 connections = {}
 
-with open(args.file) as fp:
-    for line in fp:
-        # print(line.rstrip())
-        # print("Active Connections: {}".format(len(connections)))
+if args.file:
+    fp = open(args.file)
+else:
+    fp = sys.stdin
 
-        event = RawLogParser().parse(line.rstrip())
+for line in fp:
+    # print(line.rstrip())
+    # print("Active Connections: {}".format(len(connections)))
 
-        if event == None:
-            continue
+    event = RawLogParser().parse(line.rstrip())
 
-        # Look to see if we have an existing connection
-        connection = connections.get(event['conn'])
+    if event == None:
+        continue
 
-        # If we have a pre-existing connection, just add context
-        if connection:
-            # print("Pre-existing connection: {}".format(str(event['conn'])))
-            connection.add_event(event)
+    # Look to see if we have an existing connection
+    connection = connections.get(event['conn'])
 
-            # If the connection is closed, remove from active connections
-            if connection.closed():
-                connections.pop(event['conn'])
+    # If we have a pre-existing connection, just add context
+    if connection:
+        # print("Pre-existing connection: {}".format(str(event['conn'])))
+        connection.add_event(event)
 
-        # If it's a new connection, just create one and start tracking
-        else:
-            # print("New connection: {}".format(str(event['conn'])))
-            connection = Connection(event['conn'])
-            connection.add_event(event)
-            connections[event['conn']] = connection
+        # If the connection is closed, remove from active connections
+        if connection.closed():
+            connections.pop(event['conn'])
+
+    # If it's a new connection, just create one and start tracking
+    else:
+        # print("New connection: {}".format(str(event['conn'])))
+        connection = Connection(event['conn'])
+        connection.add_event(event)
+        connections[event['conn']] = connection
