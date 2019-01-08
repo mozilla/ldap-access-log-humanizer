@@ -9,8 +9,8 @@ list:
 	@echo 'Available make targets:'
 	@grep '^[^#[:space:]^\.PHONY.*].*:' Makefile
 
-.PHONY: dependancies ## install all dependancies
-dependancies:
+.PHONY: dependencies ## install all dependencies
+dependencies:
 	pip install -e .
 
 .PHONY: tests ## run all unit tests
