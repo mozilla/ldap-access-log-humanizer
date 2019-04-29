@@ -11,6 +11,13 @@ class TestCustomLogger():
         logger = CustomLogger("stdout")
         assert isinstance(logger, CustomLogger)
 
+    def test_default(self, capsys):
+        logger = CustomLogger()
+        logger.log("hello world")
+        out, err = capsys.readouterr()
+        assert out == "hello world\n"
+        assert err == ""
+
     def test_stdout(self, capsys):
         logger = CustomLogger("stdout")
         logger.log("hello world")

@@ -1,4 +1,5 @@
 import re
+from humanizer.custom_logger import CustomLogger
 
 
 class RawLogParser:

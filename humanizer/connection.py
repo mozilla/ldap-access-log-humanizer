@@ -1,16 +1,18 @@
 import re
 from humanizer.file_descriptor import FileDescriptor
 from humanizer.operation import Operation
+from humanizer.custom_logger import CustomLogger
 
 
 class Connection:
-    def __init__(self, conn_id):
+    def __init__(self, conn_id, args={}):
         self.conn_id = conn_id
         self.time = ""
         self.server = ""
         self.process = ""
         self.operations = {}
         self.file_descriptors = []
+        self.logger = CustomLogger(args.get('output-type'), args.get('output-file'))
 
     def dict(self):
         return {
@@ -21,7 +23,7 @@ class Connection:
             "tls": self.tls()
         }
 
-    def log(self, event_dict):
+    def reconstitute(self, event_dict):
         combined_dict = {}
         combined_dict.update(self.dict())
         combined_dict.update(event_dict)
@@ -72,7 +74,7 @@ class Connection:
                 self.operations[int(op_id)] = operation
 
             if operation.loggable():
-                print(self.log(operation.dict()))
+                self.logger.log(self.reconstitute(operation.dict()))
         else:
             raise Exception('Malformed operation: {}'.format(rest))
 
@@ -89,7 +91,7 @@ class Connection:
             self.file_descriptors.append(file_descriptor)
 
             if file_descriptor.loggable():
-                print(self.log(file_descriptor.dict()))
+                self.logger.log(self.reconstitute(file_descriptor.dict()))
         else:
             raise Exception('Malformed file file_descriptor: {}'.format(rest))
 

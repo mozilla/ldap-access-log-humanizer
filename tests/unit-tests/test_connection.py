@@ -97,7 +97,7 @@ class TestConnection():
                                      'tls': False}
 
         file_descriptor = connection.file_descriptors[0]
-        assert connection.log(file_descriptor.dict()) == {'client': '192.168.1.1',
+        assert connection.reconstitute(file_descriptor.dict()) == {'client': '192.168.1.1',
                                                           'conn_id': 1245,
                                                           'details': 'from IP=192.168.1.1:56822 (IP=0.0.0.0:389)',
                                                           'fd_id': 34,
