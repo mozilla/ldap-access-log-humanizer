@@ -11,12 +11,12 @@ LOG_FILE = 'humanizer.log'
 HOST, PORT = "0.0.0.0", 1514
 CONNECTIONS = {}
 
-def parse(fp):
+def parse(fp, args_dict):
 
     for line in fp:
-        parse_line(line)
+        parse_line(line, args_dict)
 
-def parse_line(line):
+def parse_line(line, args_dict):
     # print(line.rstrip())
     # print("Active Connections: {}".format(len(connections)))
 
@@ -73,7 +73,10 @@ def main(prog_args = None):
     parser.add_argument('--file', help='path to open-ldap log file')
     parser.add_argument('--server', action='store_true',  help='run as syslog server')
     parser.add_argument('--daemonize', action='store_true',  help='run as daemon')
+    parser.add_argument('--output-type', help='output type')
+    parser.add_argument('--output-file', help='output file path')
     args = parser.parse_args()
+    import pdb; pdb.set_trace()
 
     if args.file:
         fp = open(args.file)
@@ -85,7 +88,7 @@ def main(prog_args = None):
     else:
         fp = sys.stdin
 
-    parse(fp)
+    parse(fp, vars(args))
 
 if __name__ == "__main__":
     main()

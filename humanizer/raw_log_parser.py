@@ -2,6 +2,9 @@ import re
 
 
 class RawLogParser:
+    def __init__(self, args):
+        self.logger = CustomLogger(args['output-type'], args['output-file'])
+
     def parse(self, line):
         # This regex takes a raw log and parses it into a few elements
         # time, server, process, and arbitrary remainder
@@ -16,5 +19,5 @@ class RawLogParser:
                     'rest': match.group(5)}
         else:
             #raise Exception('Failed to parse raw line: {}'.format(line))
-            print("ERROR: Failed to parse raw line: {}".format(line))
+            self.logger.log("ERROR: Failed to parse raw line: {}".format(line))
             return None
