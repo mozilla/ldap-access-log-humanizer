@@ -2,8 +2,8 @@ import re
 
 
 class RawLogParser:
-    def __init__(self, args):
-        self.logger = CustomLogger(args['output-type'], args['output-file'])
+    def __init__(self, args={}):
+        self.logger = CustomLogger(args.get('output-type'), args.get('output-file'))
 
     def parse(self, line):
         # This regex takes a raw log and parses it into a few elements

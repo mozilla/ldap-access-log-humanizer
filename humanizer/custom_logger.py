@@ -3,7 +3,7 @@ import sys
 
 
 class CustomLogger:
-    def __init__(self, log_type, output_file=None):
+    def __init__(self, log_type='stdout', output_file=None):
         self.log_type = log_type
         self.output_file = output_file
 
