@@ -12,7 +12,7 @@ class Connection:
         self.process = ""
         self.operations = {}
         self.file_descriptors = []
-        self.logger = CustomLogger(args.get('output-type'), args.get('output-file'))
+        self.logger = CustomLogger(args.get('output_type'), args.get('output_file'))
 
     def dict(self):
         return {

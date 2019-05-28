@@ -1,6 +1,4 @@
 import argparse
-import daemon
-from daemon import pidfile
 import os
 import sys
 import SocketServer
@@ -17,9 +15,6 @@ def parse(fp, args_dict):
         parse_line(line, args_dict)
 
 def parse_line(line, args_dict):
-    print(line.rstrip())
-    print("Active Connections: {}".format(len(CONNECTIONS)))
-
     event = RawLogParser(args_dict).parse(line.rstrip())
 
     if event != None:
@@ -29,7 +24,6 @@ def parse_line(line, args_dict):
 
         # If we have a pre-existing connection, just add context
         if connection:
-            print("Pre-existing connection: {}".format(str(event['conn'])))
             connection.add_event(event)
 
             # If the connection is closed, remove from active connections
@@ -38,7 +32,6 @@ def parse_line(line, args_dict):
 
         # If it's a new connection, just create one and start tracking
         else:
-            print("New connection: {}".format(str(event['conn'])))
             connection = Connection(event['conn'], args_dict)
             connection.add_event(event)
             CONNECTIONS[event['conn']] = connection
@@ -48,6 +41,9 @@ def syslog_server():
     server.serve_forever(poll_interval=0.5)
 
 def start_daemon():
+    import daemon
+    from daemon import pidfile
+
     pidf='/tmp/humanizer.pid'
     wdir = os.path.dirname(os.path.abspath(__file__))
     out = open(LOG_FILE, 'w+')
@@ -73,10 +69,9 @@ def main(prog_args = None):
     parser.add_argument('--file', help='path to open-ldap log file')
     parser.add_argument('--server', action='store_true',  help='run as syslog server')
     parser.add_argument('--daemonize', action='store_true',  help='run as daemon')
-    parser.add_argument('--output-type', help='output type')
-    parser.add_argument('--output-file', help='output file path')
+    parser.add_argument('--output_type', default='stdout', help='output type')
+    parser.add_argument('--output_file', help='output file path')
     args = parser.parse_args()
-    #import pdb; pdb.set_trace()
 
     if args.file:
         fp = open(args.file)
