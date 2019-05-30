@@ -15,9 +15,7 @@ def main(prog_args=None):
     # is ignored and you must supply all command line options or rely on
     # defaults.
 
-    parser = argparse.ArgumentParser(
-        description="Humanize (or flatten) an open-ldap log."
-    )
+    parser = argparse.ArgumentParser(description="Humanize (or flatten) an open-ldap log.")
     parser.add_argument("--daemonize", action="store_true", help="run as daemon")
     parser.add_argument("--input_type", default="stdin", help="input type")
     parser.add_argument("--input_file_name", help="path to open-ldap log file")
@@ -28,18 +26,10 @@ def main(prog_args=None):
     parser.add_argument("--output_stdout", action="store_true", help="output to stdout")
     parser.add_argument("--output_stderr", action="store_true", help="output to stderr")
     parser.add_argument("--output_file", action="store_true", help="output to file")
-    parser.add_argument(
-        "--output_file_name", default="humanizer.log", help="output file path"
-    )
-    parser.add_argument(
-        "--mozdef_url", default="https://127.0.0.1:8443/events", help="mozdef url"
-    )
-    parser.add_argument(
-        "--config", default="humanizer_settings.json", help="config file path"
-    )
-    parser.add_argument(
-        "--noconfig", action="store_true", help="use cli options instead of config"
-    )
+    parser.add_argument("--output_file_name", default="humanizer.log", help="output file path")
+    parser.add_argument("--mozdef_url", default="https://127.0.0.1:8443/events", help="mozdef url")
+    parser.add_argument("--config", default="humanizer_settings.json", help="config file path")
+    parser.add_argument("--noconfig", action="store_true", help="use cli options instead of config")
     args = parser.parse_args()
     args_dict = vars(args)
 
