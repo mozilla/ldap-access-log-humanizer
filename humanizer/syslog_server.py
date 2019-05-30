@@ -23,6 +23,7 @@ class SyslogServer(SocketServer.BaseRequestHandler):
         server.serve_forever(poll_interval=0.5)
 
     def start_syslog(self):
+        # mostly for testing, we can start a standalone daemon
         if self.args_dict['daemonize'] == True:
             import daemon
             from daemon import pidfile
@@ -38,4 +39,5 @@ class SyslogServer(SocketServer.BaseRequestHandler):
                     ) as context:
                 self.serve()
         else:
+            # when running under systemd, we don't need daemonize, just start serving
             self.serve()
