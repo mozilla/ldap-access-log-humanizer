@@ -58,5 +58,6 @@ cat /var/log/ldap/ldap.log | python run.py --noconfig --output_stdout
 For production usage, use the humanizer_settings.json file to pass the configuration and use systemd or other tool to start the listener
 ## Supported inputs and outputs
 ___________________________
-The humanizer can read logs via stdin, a specified file or from syslog over UDP
+The humanizer can read logs via stdin, a specified file or from syslog over UDP.
+
 The humanizer can output humanized logs to stdout, stderr, a specified file, forward to your MozDef server's events collector or forward to another syslog server. It can do any combination of output types, so you can have one instance write a local file, dump to stdout, stderr and forward the logs to syslog and MozDef, or any combination of these.
