@@ -11,7 +11,7 @@ config = {
     'author_email': 'jdow@mozilla, jclaudius@mozilla.com',
     'version': "0.0.1",
     'install_requires': [],
-    'packages': ['ldap-access-log-humanizer'],
+    'packages': ['ldap_access_log_humanizer'],
     'scripts': ['humanizer.py'],
     'data_files': [('etc/humanizer', ['humanizer_settings.json.default'])],
     'name': 'humanizer'
