@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import re
-from humanizer.operation import Operation
+from test_access_log_humanizer.operation import Operation
 
 
 class TestOperation():

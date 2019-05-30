@@ -1,5 +1,5 @@
-from humanizer.raw_log_parser import RawLogParser
-from humanizer.connection import Connection
+from ldap_access_log_humanizer.raw_log_parser import RawLogParser
+from ldap_access_log_humanizer.connection import Connection
 
 
 class Parser:

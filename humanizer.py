@@ -2,8 +2,8 @@ import argparse
 import json
 import os
 import sys
-from humanizer import Parser
-from humanizer import SyslogServer
+from ldap_access_log_humanizer import Parser
+from ldap_access_log_humanizer import SyslogServer
 
 
 def main(prog_args=None):

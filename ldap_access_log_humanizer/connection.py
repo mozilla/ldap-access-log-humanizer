@@ -1,7 +1,7 @@
 import re
-from humanizer.file_descriptor import FileDescriptor
-from humanizer.operation import Operation
-from humanizer.custom_logger import CustomLogger
+from ldap_access_log_humanizer.file_descriptor import FileDescriptor
+from ldap_access_log_humanizer.operation import Operation
+from ldap_access_log_humanizer.custom_logger import CustomLogger
 
 
 class Connection:

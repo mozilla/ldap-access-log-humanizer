@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from humanizer.raw_log_parser import RawLogParser
+from ldap_access_log_humanizer.raw_log_parser import RawLogParser
 
 
 class TestRawLogParser():
