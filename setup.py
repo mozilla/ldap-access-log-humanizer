@@ -12,7 +12,8 @@ config = {
     'version': "0.0.1",
     'install_requires': [],
     'packages': ['humanizer'],
-    'scripts': [],
+    'scripts': ['humanizer.py'],
+    'data_files': [('etc/humanizer', ['humanizer_settings.json.default'])],
     'name': 'humanizer'
 }
 
