@@ -30,16 +30,16 @@ class CustomLogger:
             with open(self.output_file_name, append_write) as f:
                 f.write(str(data) + '\n')
         elif self.output_mozdef or self.output_syslog:
-	    msg = mozdef_client.MozDefEvent(self.mozdef_url)
-	    msg.summary = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
-	    msg.tags = ['ldap']
-	    # make sure it's a dict
-	    msg.details = data
-	    msg.categories = ['ldap']
+            msg = mozdef_client.MozDefEvent(self.mozdef_url)
+            msg.summary = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
+            msg.tags = ['ldap']
+            # make sure it's a dict
+            msg.details = data
+            msg.categories = ['ldap']
             if self.output_syslog:
                 if not self.output_mozdef:
                     msg.set_send_to_syslog(True, only_syslog=True)
                 else:
                     msg.set_send_to_syslog(True)
-	    msg.send()
+            msg.send()
 
