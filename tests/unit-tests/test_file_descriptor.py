@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import re
-from humanizer.file_descriptor import FileDescriptor
+from ldap_access_log_humanizer.file_descriptor import FileDescriptor
 
 
 class TestFileDescriptor():

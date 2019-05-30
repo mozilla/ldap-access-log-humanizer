@@ -2,7 +2,7 @@
 import re
 import pytest
 import os
-from humanizer.custom_logger import CustomLogger
+from ldap_access_log_humanizer.custom_logger import CustomLogger
 import os
 
 

@@ -3,7 +3,7 @@ import re
 import pytest
 import sys
 import os
-from humanizer.connection import Connection
+from ldap_access_log_humanizer.connection import Connection
 
 
 class TestConnection():

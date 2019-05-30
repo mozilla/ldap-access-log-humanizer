@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 # Copyright (c) 2014 Mozilla Corporation
 #
-PACKAGE := ldap-access-log-humanizer
+PACKAGE := ldap_access_log_humanizer
 
 .PHONY:list ## List all make targets
 list:
