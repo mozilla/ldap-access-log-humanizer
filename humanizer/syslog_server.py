@@ -3,6 +3,7 @@ try:
 except ImportError:
     import socketserver as SocketServer
 
+
 class SyslogServer(SocketServer.BaseRequestHandler):
     def __init__(self, fp, args_dict):
         self.args_dict = args_dict
@@ -19,15 +20,15 @@ class SyslogServer(SocketServer.BaseRequestHandler):
         parser.parse_line()
 
     def serve(self):
-        server = SocketServer.UDPServer((self.host,self.port), self.handle())
+        server = SocketServer.UDPServer((self.host, self.port), self.handle())
         server.serve_forever(poll_interval=0.5)
 
     def start_syslog(self):
         # mostly for testing, we can start a standalone daemon
-        if self.args_dict['daemonize'] == True:
+        if self.args_dict['daemonize']:
             import daemon
             from daemon import pidfile
-            pidf='/tmp/humanizer.pid'
+            pidf = '/tmp/humanizer.pid'
             wdir = os.path.dirname(os.path.abspath(__file__))
             out = self.logger
             with daemon.DaemonContext(

@@ -52,7 +52,6 @@ LDAP_ERROR_CODES = {
     # Indicates that during a bind operation, the client is attempting to use an authentication method that the client cannot use correctly. For example, either of the following cause this error: The client returns simple credentials when strong credentials are required...OR...The client returns a DN and a password for a simple bind when the entry does not have a password defined.
     48: "LDAP_INAPPROPRIATE_AUTH",
     49: "LDAP_INVALID_CREDENTIALS",  # Indicates that during a bind operation one of the following occurred: The client passed either an incorrect DN or password, or the password is incorrect because it has expired, intruder detection has locked the account, or another similar reason. See the data code for more information.
-
     # Not sure how these will look in logs, commenting them out until we have examples
     # 49 / 52e  AD_INVALID CREDENTIALS  Indicates an Active Directory(AD) AcceptSecurityContext error, which is returned when the username is valid but the combination of password and user credential is invalid. This is the AD equivalent of LDAP error code 49.
     # 49 / 525  USER NOT FOUND  Indicates an Active Directory(AD) AcceptSecurityContext data error that is returned when the username is invalid.
@@ -69,7 +68,6 @@ LDAP_ERROR_CODES = {
     51: "LDAP_BUSY",
     # Indicates that the LDAP server cannot process the client's bind request, usually because it is shutting down.
     52: "LDAP_UNAVAILABLE",
-
     # Need to sort out above before adding this
     # 52e   AD_INVALID CREDENTIALS  Indicates an Active Directory(AD) AcceptSecurityContext error, which is returned when the username is valid but the combination of password and user credential is invalid. This is the AD equivalent of LDAP error code 49: LDAP_INVALID_CREDENTIALS.
     # Indicates that the LDAP server cannot process the request because of server-defined restrictions. This error is returned for the following reasons: The add entry request violates the server's structure rules...OR...The modify attribute request specifies attributes that users cannot modify...OR...Password restrictions prevent the action...OR...Connection restrictions prevent the action.
@@ -77,22 +75,22 @@ LDAP_ERROR_CODES = {
     # Indicates that the client discovered an alias or referral loop, and is thus unable to complete this request.
     54: "LDAP_LOOP_DETECT",
     # Indicates that the add or modify DN operation violates the schema's structure rules. For example, The request places the entry subordinate to an alias. The request places the entry subordinate to a container that is forbidden by the containment rules. The RDN for the entry uses a forbidden attribute type.
-    64:  "LDAP_NAMING_VIOLATION",
-    65:  "LDAP_OBJECT_CLASS_VIOLATION",  # Indicates that the add, modify, or modify DN operation violates the object class rules for the entry. For example, the following types of request return this error: The add or modify operation tries to add an entry without a value for a required attribute. The add or modify operation tries to add an entry with a value for an attribute which the class definition does not contain. The modify operation tries to remove a required attribute without removing the auxiliary class that defines the attribute as required.
+    64: "LDAP_NAMING_VIOLATION",
+    65: "LDAP_OBJECT_CLASS_VIOLATION",  # Indicates that the add, modify, or modify DN operation violates the object class rules for the entry. For example, the following types of request return this error: The add or modify operation tries to add an entry without a value for a required attribute. The add or modify operation tries to add an entry with a value for an attribute which the class definition does not contain. The modify operation tries to remove a required attribute without removing the auxiliary class that defines the attribute as required.
     # Indicates that the requested operation is permitted only on leaf entries. For example, the following types of requests return this error: The client requests a delete operation on a parent entry. The client request a modify DN operation on a parent entry.
-    66:  "LDAP_NOT_ALLOWED_ON_NONLEAF",
+    66: "LDAP_NOT_ALLOWED_ON_NONLEAF",
     # Indicates that the modify operation attempted to remove an attribute value that forms the entry's relative distinguished name.
-    67:  "LDAP_NOT_ALLOWED_ON_RDN",
+    67: "LDAP_NOT_ALLOWED_ON_RDN",
     # Indicates that the add operation attempted to add an entry that already exists, or that the modify operation attempted to rename an entry to the name of an entry that already exists.
-    68:  "LDAP_ALREADY_EXISTS",
+    68: "LDAP_ALREADY_EXISTS",
     # Indicates that the modify operation attempted to modify the structure rules of an object class.
-    69:  "LDAP_NO_OBJECT_CLASS_MODS",
+    69: "LDAP_NO_OBJECT_CLASS_MODS",
     # Reserved for CLDAP.
-    70:  "LDAP_RESULTS_TOO_LARGE",
+    70: "LDAP_RESULTS_TOO_LARGE",
     # Indicates that the modify DN operation moves the entry from one LDAP server to another and requires more than one LDAP server.
-    71:  "LDAP_AFFECTS_MULTIPLE_DSAS",
+    71: "LDAP_AFFECTS_MULTIPLE_DSAS",
     # Indicates an unknown error condition. This is the default value for NDS error codes which do not map to other LDAP error codes.
-    80:  "LDAP_OTHER",
+    80: "LDAP_OTHER",
 }
 
 
@@ -109,7 +107,7 @@ class Operation:
         self.error = ""
 
         # Example: tag=97 err=49 text=
-        pattern = r'err=(\d+)'
+        pattern = r"err=(\d+)"
         match = re.search(pattern, rest)
 
         # If there was an error, add text error value (so humans can understand)
@@ -117,7 +115,18 @@ class Operation:
             self.error = LDAP_ERROR_CODES[int(match.group(1))]
 
     def add_event(self, rest):
-        verbs = ["ADD", "MOD", "PASSMOD", "BIND", "SRCH", "EXT", "STARTTLS", "UNBIND", "CMP", "WHOAMI"]
+        verbs = [
+            "ADD",
+            "MOD",
+            "PASSMOD",
+            "BIND",
+            "SRCH",
+            "EXT",
+            "STARTTLS",
+            "UNBIND",
+            "CMP",
+            "WHOAMI",
+        ]
         tokenized_rest = rest.split(" ")
 
         if tokenized_rest[0] in verbs:
@@ -134,18 +143,14 @@ class Operation:
                                 attrs.append(attr.split("=")[1])
                             else:
                                 attrs.append(attr)
-                        self.requests[0]["details"].append(
-                            'attrs=' + ",".join(attrs))
+                        self.requests[0]["details"].append("attrs=" + ",".join(attrs))
                     else:
                         self.requests[0]["details"].extend(tokenized_rest[1:])
-                        self.requests[0]["details"] = list(
-                            set(self.requests[0]["details"]))
+                        self.requests[0]["details"] = list(set(self.requests[0]["details"]))
                 else:
-                    self.requests.append(
-                        {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+                    self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
             else:
-                self.requests.append(
-                    {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+                self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
         elif tokenized_rest[0] == "RESULT":
             self.response_verb = "RESULT"
             self.response_verb_details.update(tokenized_rest[1:])
@@ -153,12 +158,11 @@ class Operation:
             self.response_verb = "SEARCH RESULT"
             self.response_verb_details.update(tokenized_rest[2:])
         elif tokenized_rest[0] == "ABANDON":
-            self.requests.append(
-                {"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+            self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
             self.response_verb = "None"
         else:
             # This is just a catch all until we exhaust the supported verbs
-            raise Exception('Unsupported VERB in: {}'.format(rest))
+            raise Exception("Unsupported VERB in: {}".format(rest))
 
         # Sort the requests details, to make it more deterministic
         for request in self.requests:
@@ -173,8 +177,9 @@ class Operation:
             "response": {
                 "verb": self.response_verb,
                 "details": sorted(list(self.response_verb_details)),
-                "error": self.error
-            }}
+                "error": self.error,
+            },
+        }
 
     def loggable(self):
         # We only want to log op, when we have a result/response

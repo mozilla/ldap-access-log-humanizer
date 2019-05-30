@@ -1,6 +1,7 @@
 from humanizer.raw_log_parser import RawLogParser
 from humanizer.connection import Connection
 
+
 class Parser:
     def __init__(self, fp, args_dict):
         self.fp = fp
@@ -14,7 +15,7 @@ class Parser:
     def parse_line(self, line):
         event = RawLogParser(self.args_dict).parse(line.rstrip())
 
-        if event != None:
+        if event is not None:
 
             # Look to see if we have an existing connection
             connection = self.connections.get(event["conn"])

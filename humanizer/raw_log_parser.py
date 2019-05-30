@@ -19,6 +19,6 @@ class RawLogParser:
                     'conn': match.group(4),
                     'rest': match.group(5)}
         else:
-            #raise Exception('Failed to parse raw line: {}'.format(line))
+            # raise Exception('Failed to parse raw line: {}'.format(line))
             self.logger.log("ERROR: Failed to parse raw line: {}".format(line))
             return None
