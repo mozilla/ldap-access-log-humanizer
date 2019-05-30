@@ -3,6 +3,8 @@ from humanizer.operation import Operation
 from humanizer.raw_log_parser import RawLogParser
 from humanizer.connection import Connection
 from humanizer.custom_logger import CustomLogger
+from humanizer.parser import Parser
+from humanizer.syslog_server import SyslogServer
 
 
 __all__ = [
@@ -10,5 +12,7 @@ __all__ = [
     Operation,
     RawLogParser,
     Connection,
-    CustomLogger
+    CustomLogger,
+    Parser,
+    SyslogServer
 ]

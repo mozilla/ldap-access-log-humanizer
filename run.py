@@ -1,91 +1,51 @@
 import argparse
-import daemon
-from daemon import pidfile
+import json
 import os
 import sys
-import SocketServer
-from humanizer import RawLogParser
-from humanizer import Connection
-
-LOG_FILE = 'humanizer.log'
-HOST, PORT = "0.0.0.0", 1514
-CONNECTIONS = {}
-
-def parse(fp):
-
-    for line in fp:
-        parse_line(line)
-
-def parse_line(line):
-    # print(line.rstrip())
-    # print("Active Connections: {}".format(len(connections)))
-
-    event = RawLogParser().parse(line.rstrip())
-
-    if event != None:
-
-        # Look to see if we have an existing connection
-        connection = CONNECTIONS.get(event['conn'])
-
-        # If we have a pre-existing connection, just add context
-        if connection:
-            # print("Pre-existing connection: {}".format(str(event['conn'])))
-            connection.add_event(event)
-
-            # If the connection is closed, remove from active connections
-            if connection.closed():
-                CONNECTIONS.pop(event['conn'])
-
-        # If it's a new connection, just create one and start tracking
-        else:
-            # print("New connection: {}".format(str(event['conn'])))
-            connection = Connection(event['conn'])
-            connection.add_event(event)
-            CONNECTIONS[event['conn']] = connection
-
-def syslog_server():
-    server = SocketServer.UDPServer((HOST,PORT), SyslogUDPHandler)
-    server.serve_forever(poll_interval=0.5)
-
-def start_daemon():
-    pidf='/tmp/humanizer.pid'
-    wdir = os.path.dirname(os.path.abspath(__file__))
-    out = open(LOG_FILE, 'w+')
-    with daemon.DaemonContext(
-            working_directory=wdir,
-            stdout=out,
-            stderr=out,
-            umask=0o002,
-            pidfile=pidfile.TimeoutPIDLockFile(pidf),
-            ) as context:
-        syslog_server()
-
-class SyslogUDPHandler(SocketServer.BaseRequestHandler):
-    def handle(self):
-        data = bytes.decode(self.request[0].strip())
-        socket = self.request[1]
-        parse_line(str(data))
+from humanizer import Parser
+from humanizer import SyslogServer
 
 def main(prog_args = None):
 
+
     parser = argparse.ArgumentParser(
         description='Humanize (or flatten) an open-ldap log.')
-    parser.add_argument('--file', help='path to open-ldap log file')
-    parser.add_argument('--server', action='store_true',  help='run as syslog server')
     parser.add_argument('--daemonize', action='store_true',  help='run as daemon')
+    parser.add_argument('--input_type', default='stdin',  help='input type')
+    parser.add_argument('--input_file_name', help='path to open-ldap log file')
+    parser.add_argument('--host', default='0.0.0.0', help='IP to listen on')
+    parser.add_argument('--port', default='1514', help='port to listen on')
+    parser.add_argument('--output_syslog', action='store_true', help='output to syslog')
+    parser.add_argument('--output_mozdef', action='store_true', help='output to mozdef')
+    parser.add_argument('--output_stdout', action='store_true', help='output to stdout')
+    parser.add_argument('--output_stderr', action='store_true', help='output to stderr')
+    parser.add_argument('--output_file', action='store_true', help='output to file')
+    parser.add_argument('--output_file_name', default='humanizer.log', help='output file path')
+    parser.add_argument('--mozdef_url', default='https://127.0.0.1:8443/events', help='mozdef url')
+    parser.add_argument('--config', default='humanizer_settings.json', help='config file path')
+    parser.add_argument('--noconfig', action='store_true', help='use cli options instead of config')
     args = parser.parse_args()
+    args_dict = vars(args)
 
-    if args.file:
-        fp = open(args.file)
-    elif args.server:
-        if args.daemonize:
-            start_daemon()
+    if not args.noconfig:
+        if args.config:
+            with open(args.config) as fd:
+                args_dict = json.load(fd)
         else:
-            syslog_server()
-    else:
-        fp = sys.stdin
+            __location__=os.path.dirname(__file__)
+            with open(os.path.join(__location__, 'humanizer_settings.json')) as fd:
+                args_dict = json.load(fd)
 
-    parse(fp)
+    if args_dict['input_type'] == 'stdin':
+        fp = sys.stdin
+    elif args_dict['input_type'] == 'file':
+        fp = open(args_dict['input_file_name'])
+    elif args_dict['input_type'] == 'syslog':
+        syslog_server = SyslogServer(fp, args_dict)
+        syslog_server.start_syslog()
+
+    log_parser = Parser(fp, args_dict)
+    log_parser.parse()
 
 if __name__ == "__main__":
     main()
