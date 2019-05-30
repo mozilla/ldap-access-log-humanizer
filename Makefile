@@ -11,7 +11,7 @@ list:
 
 .PHONY: dependencies ## install all dependencies
 dependencies:
-	pip install -e .
+	pip install -r requirements.txt
 
 .PHONY: tests ## run all unit tests
 tests:
