@@ -1,4 +1,7 @@
-import SocketServer
+try:
+    import SocketServer
+except ImportError:
+    import socketserver as SocketServer
 
 class SyslogServer(SocketServer.BaseRequestHandler):
     def __init__(self, fp, args_dict):
