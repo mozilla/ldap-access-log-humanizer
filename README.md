@@ -40,19 +40,19 @@ which is more readable by humans and machines. The benefit to this format is tha
 ____
 For testing purposes, use just the command line utility like this:
 ```
-python run.py --noconfig --input_file_name /var/log/ldap/ldap.log --output_stdout
+python humanizer.py --noconfig --input_file_name /var/log/ldap/ldap.log --output_stdout
 ```
 This will read the specified OpenLDAP log file and dump the humanized output to stdout
 
 To start a syslog daemon:
 ```
-python run.py --noconfig --input_type syslog --daemonize --host 0.0.0.0 --port 1514 --output_file /var/log/humanizer.log
+python humanizer.py --noconfig --input_type syslog --daemonize --host 0.0.0.0 --port 1514 --output_file /var/log/humanizer.log
 ```
 This will open a listener on 0.0.0.0:1514 (udp) and accept syslog messages and write the humanized logs to the specified log file.
 
 Quick and dirty:
 ```
-cat /var/log/ldap/ldap.log | python run.py --noconfig --output_stdout
+cat /var/log/ldap/ldap.log | python humanizer.py --noconfig --output_stdout
 ```
 
 For production usage, use the humanizer_settings.json file to pass the configuration and use systemd or other tool to start the listener
