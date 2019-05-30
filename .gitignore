@@ -2,3 +2,4 @@
 __pycache__
 humanizer.egg-info
 .pytest_cache/
+humanizer_settings.json

@@ -3,8 +3,8 @@ from humanizer.custom_logger import CustomLogger
 
 
 class RawLogParser:
-    def __init__(self, args={}):
-        self.logger = CustomLogger(args.get('output_type'), args.get('output_file'))
+    def __init__(self, args_dict):
+        self.logger = CustomLogger(args_dict)
 
     def parse(self, line):
         # This regex takes a raw log and parses it into a few elements

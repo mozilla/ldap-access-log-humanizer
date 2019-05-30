@@ -5,14 +5,14 @@ from humanizer.custom_logger import CustomLogger
 
 
 class Connection:
-    def __init__(self, conn_id, args={}):
+    def __init__(self, conn_id, args_dict):
         self.conn_id = conn_id
         self.time = ""
         self.server = ""
         self.process = ""
         self.operations = {}
         self.file_descriptors = []
-        self.logger = CustomLogger(args.get('output_type'), args.get('output_file'))
+        self.logger = CustomLogger(args_dict)
 
     def dict(self):
         return {
