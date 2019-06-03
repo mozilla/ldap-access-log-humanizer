@@ -9,7 +9,7 @@ class RawLogParser:
     def parse(self, line):
         # This regex takes a raw log and parses it into a few elements
         # time, server, process, and arbitrary remainder
-        pattern = r'^(\w+ \d+ \d+:\d+:\d+) ([a-zA-Z0-9\.]+) (\w+\[\d+\]): conn=(\d+) (.*)$'
+        pattern = r'^(\w+ +\d+ \d+:\d+:\d+) ([a-zA-Z0-9\.]+) (\w+\[\d+\]): conn=(\d+) (.*)$'
         match = re.search(pattern, line)
 
         if match:
