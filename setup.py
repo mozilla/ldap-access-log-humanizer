@@ -13,7 +13,7 @@ config = {
     'install_requires': ['requests'],
     'packages': ['ldap_access_log_humanizer'],
     'scripts': ['humanizer.py'],
-    'data_files': [('etc/humanizer', ['humanizer_settings.json.default'])],
+    'data_files': [('/etc/humanizer', ['humanizer_settings.json.default'])],
     'name': 'ldap-access-log-humanizer'
 }
 
