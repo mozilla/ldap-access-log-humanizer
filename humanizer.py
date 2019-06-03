@@ -45,7 +45,7 @@ def main(prog_args=None):
                 with open(os.path.join(__location__, "humanizer_settings.json")) as fd:
                     args_dict = json.load(fd)
             except FileNotFound:
-                with open("/etc/humanizer/humanizer_settings.json")) as fd:
+                with open("/etc/humanizer/humanizer_settings.json") as fd:
                     args_dict = json.load(fd)
 
     # Once we've figured out which configuration we are using, we set the fp var
