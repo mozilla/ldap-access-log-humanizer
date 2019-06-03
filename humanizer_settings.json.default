@@ -6,10 +6,12 @@
     "host": "0.0.0.0",
     "port": "1514",
     "output_syslog": false,
+    "syslog_facility": "LOG_LOCAL5",
     "output_mozdef": false,
     "output_stdout": true,
     "output_stderr": false,
     "output_file": false,
     "output_file_name": "humanizer.log",
-    "mozdef_url": "https://127.0.0.1:8443/events"
+    "mozdef_url": "https://127.0.0.1:8443/events",
+    "verbose": false
 }
