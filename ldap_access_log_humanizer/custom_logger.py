@@ -1,6 +1,9 @@
+import datetime
 import os
+import requests
+import socket
 import sys
-import mozdef_client
+import syslog
 
 
 class CustomLogger:
@@ -31,21 +34,17 @@ class CustomLogger:
 
             with open(self.output_file_name, append_write) as f:
                 f.write(str(data) + '\n')
-        # the mozdef client module supports sending to syslog, so we just use
-        # that functionality for both mozdef and syslog output types.
-        # See https://github.com/mozilla/mozdef_client/#usage
-        elif self.output_mozdef or self.output_syslog:
-            msg = mozdef_client.MozDefEvent(self.mozdef_url)
-            msg.summary = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
-            msg.tags = ['ldap']
-            # make sure it's a dict
-            msg.details = data
-            msg.categories = ['ldap']
-            if self.output_syslog:
-                if not self.output_mozdef:
-                    # send only to syslog
-                    msg.set_send_to_syslog(True, only_syslog=True)
-                else:
-                    # send to syslog and mozdef
-                    msg.set_send_to_syslog(True)
-            msg.send()
+        if self.output_syslog:
+            syslog.openlog(facility=syslog.local5)
+            syslog.syslog(data)
+        if self.output_mozdef:
+            msg = {}
+            msg['timestamp'] = str(datetime.datetime.utcnow())
+            msg['hostname'] = socket.getfqdn()
+            msg['category'] = ['ldap']
+            msg['tags'] = ['ldap']
+            msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
+
+            resp = requests.post(self.mozdef_url, data = msg)
+            if resp.code != "200":
+                print("Failed to post to mozdef")
