@@ -46,5 +46,5 @@ class CustomLogger:
             msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
 
             resp = requests.post(self.mozdef_url, data = msg)
-            if resp.code != "200"
+            if resp.code != "200":
                 print("Failed to post to mozdef")
