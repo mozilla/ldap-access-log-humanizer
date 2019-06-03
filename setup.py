@@ -10,11 +10,11 @@ config = {
     'download_url': '',
     'author_email': 'jdow@mozilla, jclaudius@mozilla.com',
     'version': "0.0.1",
-    'install_requires': ['mozdef_client'],
+    'install_requires': [],
     'packages': ['ldap_access_log_humanizer'],
     'scripts': ['humanizer.py'],
     'data_files': [('etc/humanizer', ['humanizer_settings.json.default'])],
-    'name': 'humanizer'
+    'name': 'ldap-access-log-humanizer'
 }
 
 setup(**config)
