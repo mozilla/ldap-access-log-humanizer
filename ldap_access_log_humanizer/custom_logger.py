@@ -37,7 +37,7 @@ class CustomLogger:
         if self.output_syslog:
             syslog.openlog(facility=syslog.local5)
             syslog.syslog(data)
-        if self.output_mozdef
+        if self.output_mozdef:
             msg = {}
             msg['timestamp'] = str(datetime.datetime.utcnow())
             msg['hostname'] = socket.getfqdn()
