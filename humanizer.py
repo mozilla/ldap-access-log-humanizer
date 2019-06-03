@@ -41,8 +41,12 @@ def main(prog_args=None):
                 args_dict = json.load(fd)
         else:
             __location__ = os.path.dirname(__file__)
-            with open(os.path.join(__location__, "humanizer_settings.json")) as fd:
-                args_dict = json.load(fd)
+            try:
+                with open(os.path.join(__location__, "humanizer_settings.json")) as fd:
+                    args_dict = json.load(fd)
+            except FileNotFound:
+                with open("/etc/humanizer/humanizer_settings.json")) as fd:
+                    args_dict = json.load(fd)
 
     # Once we've figured out which configuration we are using, we set the fp var
     # to the input method of choice and go into the business of parsing the input
