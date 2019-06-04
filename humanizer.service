@@ -1,0 +1,12 @@
+[Unit]
+Description=LDAP Access Log Humanizer
+After=syslog.target network-online.target
+Documentation=https://github.com/jdow/ldap-access-log-humanizer/blob/master/README.md
+
+[Service]
+Type=simple
+PIDFile=/var/run/humanizer/humanizer.pid
+ExecStart=/usr/bin/humanizer.py --config /etc/humanizer/humanizer_settings.json
+
+[Install]
+WantedBy=multi-user.target

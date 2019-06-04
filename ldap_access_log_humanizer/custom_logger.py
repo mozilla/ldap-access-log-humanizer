@@ -35,7 +35,7 @@ class CustomLogger:
             with open(self.output_file_name, append_write) as f:
                 f.write(str(data) + '\n')
         if self.output_syslog:
-            syslog.openlog(facility=syslog.local5)
+            syslog.openlog(facility=syslog.args_dict['syslog_facility'])
             syslog.syslog(data)
         if self.output_mozdef:
             msg = {}

@@ -9,7 +9,7 @@ class RawLogParser:
     def parse(self, line):
         # This regex takes a raw log and parses it into a few elements
         # time, server, process, and arbitrary remainder
-        pattern = r'^(\w+ \d+ \d+:\d+:\d+) ([a-zA-Z0-9\.]+) (\w+\[\d+\]): conn=(\d+) (.*)$'
+        pattern = r'^(\w+ +\d+ \d+:\d+:\d+) ([a-zA-Z0-9\.]+) (\w+\[\d+\]): conn=(\d+) (.*)$'
         match = re.search(pattern, line)
 
         if match:
@@ -20,5 +20,6 @@ class RawLogParser:
                     'rest': match.group(5)}
         else:
             # raise Exception('Failed to parse raw line: {}'.format(line))
-            self.logger.log("ERROR: Failed to parse raw line: {}".format(line))
+            if args_dict['verbose']:
+                self.logger.log("ERROR: Failed to parse raw line: {}".format(line))
             return None
