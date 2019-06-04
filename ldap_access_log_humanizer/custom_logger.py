@@ -17,6 +17,26 @@ class CustomLogger:
         self.output_file = args_dict['output_file']
         self.output_file_name = args_dict['output_file_name']
         self.mozdef_url = args_dict['mozdef_url']
+        self.syslog_facility = args_dict['syslog_facility']
+        self.syslog_map = {
+                'LOG_KERN' : 0,
+                'LOG_USER' : 8,
+                'LOG_MAIL' : 16,
+                'LOG_DAEMON' : 24,
+                'LOG_AUTH' : 32,
+                'LOG_LRP' : 48,
+                'LOG_NEWS' : 56,
+                'LOG_UUCP' : 64,
+                'LOG_CRON' : 72,
+                'LOG_LOCAL0' : 128,
+                'LOG_LOCAL1' : 136,
+                'LOG_LOCAL2' : 144,
+                'LOG_LOCAL3' : 152,
+                'LOG_LOCAL4' : 160,
+                'LOG_LOCAL5' : 168,
+                'LOG_LOCAL6' : 176,
+                'LOG_LOCAL7' : 184,
+                }
 
     def log(self, data):
         if self.output_stdout:
@@ -35,8 +55,9 @@ class CustomLogger:
             with open(self.output_file_name, append_write) as f:
                 f.write(str(data) + '\n')
         if self.output_syslog:
-            syslog.openlog(facility=syslog.args_dict['syslog_facility'])
-            syslog.syslog(data)
+            facility = self.syslog_map[self.syslog_facility]
+            syslog.openlog(facility=facility)
+            syslog.syslog(str(data))
         if self.output_mozdef:
             msg = {}
             msg['timestamp'] = str(datetime.datetime.utcnow())

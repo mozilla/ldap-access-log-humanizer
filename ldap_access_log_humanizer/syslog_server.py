@@ -3,14 +3,21 @@ try:
 except ImportError:
     import socketserver as SocketServer
 from ldap_access_log_humanizer.custom_logger import CustomLogger
+from ldap_access_log_humanizer.parser import Parser
+
 
 class SyslogUDPHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
         data = bytes.decode(self.request[0].strip())
         socket = self.request[1]
-        parser = Parser(str(data), args_dict)
-        parser.parse_line()
+        parser = Parser(data, self.server.args_dict)
+        parser.parse_line(str(data))
+
+class UDPServer(SocketServer.UDPServer):
+    def __init__(self, server_address, RequestHandlerClass, args_dict, bind_and_activate=True):
+        SocketServer.UDPServer.__init__(self, server_address, RequestHandlerClass)
+        self.args_dict = args_dict
 
 class SyslogServer():
 
@@ -23,7 +30,7 @@ class SyslogServer():
         self.logger = CustomLogger(self.args_dict)
 
     def serve(self):
-        server = SocketServer.UDPServer((self.host, int(self.port)), SyslogUDPHandler)
+        server = UDPServer((self.host, int(self.port)), SyslogUDPHandler, self.args_dict)
         server.serve_forever(poll_interval=0.5)
 
     def start_syslog(self):
