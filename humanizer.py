@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import argparse
 import json
@@ -43,7 +43,7 @@ def main(prog_args=None):
             __location__ = os.path.dirname(__file__)
             try:
                 with open(os.path.join(__location__, "humanizer_settings.json")) as fd:
-                    args_dict = json.load(fd)
+                    args_dict = simpleson.load(fd)
             except FileNotFound:
                 with open("/etc/humanizer/humanizer_settings.json") as fd:
                     args_dict = json.load(fd)
@@ -55,7 +55,7 @@ def main(prog_args=None):
     elif args_dict["input_type"] == "file":
         fp = open(args_dict["input_file_name"])
     elif args_dict["input_type"] == "syslog":
-        syslog_server = SyslogServer(fp, args_dict)
+        syslog_server = SyslogServer(args_dict)
         syslog_server.start_syslog()
 
     # The syslog server handles the parsing directly, but if we've chosen
