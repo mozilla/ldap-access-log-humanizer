@@ -51,7 +51,7 @@ class TestConnection():
         assert len(connection.operations) == 0
         assert connection.tls() == True
 
-    def test_persistent tls_established(self):
+    def test_persistent_tls_established(self):
         rest1 = 'fd=34 TLS established tls_ssf = 256 ssf = 256'
         rest2 = 'fd=34 FOO bar tls_ssf = 256 ssf = 256'
 
