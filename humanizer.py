@@ -24,6 +24,7 @@ def main(prog_args=None):
     parser.add_argument("--host", default="0.0.0.0", help="IP to listen on")
     parser.add_argument("--port", default="1514", help="port to listen on")
     parser.add_argument("--output_syslog", action="store_true", help="output to syslog")
+    parser.add_argument("--syslog_facility", default"LOG_LOCAL5", help="syslog facility to log to")
     parser.add_argument("--output_mozdef", action="store_true", help="output to mozdef")
     parser.add_argument("--output_stdout", action="store_true", help="output to stdout")
     parser.add_argument("--output_stderr", action="store_true", help="output to stderr")
