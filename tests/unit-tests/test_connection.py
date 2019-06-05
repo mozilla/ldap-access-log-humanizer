@@ -6,7 +6,7 @@ import os
 from ldap_access_log_humanizer.connection import Connection
 
 TEST_CONNECTION_ARGS_DICT = {'output_mozdef': False, 'output_stdout': True, 'input_type': 'file', 'output_file': False, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
-        'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'humanizer.log', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5'}
+                             'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'humanizer.log', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5'}
 
 
 class TestConnection():
@@ -69,7 +69,7 @@ class TestConnection():
 
         # Adding another rest, to ensure TLS is persistent through connection
         connection.add_rest(rest2)
-        assert len(connection.file_descriptors) == 1
+        assert len(connection.file_descriptors) == 2
         assert len(connection.operations) == 0
         assert connection.tls() == True
 
