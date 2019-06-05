@@ -10,6 +10,7 @@ class SyslogUDPHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
         data = bytes.decode(self.request[0].strip())
+        data = data.strip('<167>')
         socket = self.request[1]
         parser = Parser(data, self.server.args_dict)
         parser.parse_line(str(data))
