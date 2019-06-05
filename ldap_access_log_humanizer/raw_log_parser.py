@@ -4,7 +4,8 @@ from ldap_access_log_humanizer.custom_logger import CustomLogger
 
 class RawLogParser:
     def __init__(self, args_dict):
-        self.logger = CustomLogger(args_dict)
+        self.args_dict = args_dict
+        self.logger = CustomLogger(self.args_dict)
 
     def parse(self, line):
         # This regex takes a raw log and parses it into a few elements
@@ -20,6 +21,6 @@ class RawLogParser:
                     'rest': match.group(5)}
         else:
             # raise Exception('Failed to parse raw line: {}'.format(line))
-            if args_dict['verbose']:
+            if self.args_dict['verbose']:
                 self.logger.log("ERROR: Failed to parse raw line: {}".format(line))
             return None

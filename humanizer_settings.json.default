@@ -1,4 +1,4 @@
-#copy the default config to humanizer_settings.json and make changes to the copy
+#copy the default config to humanizer_settings.json and make changes to the copy. Remove this line
 {
     "daemonize": false,
     "input_type": "stdin",
