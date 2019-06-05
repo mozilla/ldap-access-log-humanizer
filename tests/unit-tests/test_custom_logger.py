@@ -29,7 +29,10 @@ class TestCustomLogger():
         assert err == ""
 
     def test_stderr(self, capsys):
-        logger = CustomLogger(TEST_CUSTOM_LOGGER_ARGS_DICT)
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'output_stderr': True, 'input_type': 'file', 'output_file': False, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'humanizer.log', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5'}
+
+        logger = CustomLogger(args_dict)
         logger.log("hello world")
         out, err = capsys.readouterr()
         assert out == ""
