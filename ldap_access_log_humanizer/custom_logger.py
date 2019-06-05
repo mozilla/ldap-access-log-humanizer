@@ -4,6 +4,7 @@ import requests
 import socket
 import sys
 import syslog
+import requests
 
 
 class CustomLogger:
@@ -45,6 +46,6 @@ class CustomLogger:
             msg['tags'] = ['ldap']
             msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
 
-            resp = requests.post(self.mozdef_url, data = msg)
+            resp = requests.post(self.mozdef_url, data=msg)
             if resp.code != "200":
                 print("Failed to post to mozdef")
