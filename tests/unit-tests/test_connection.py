@@ -5,21 +5,21 @@ import sys
 import os
 from ldap_access_log_humanizer.connection import Connection
 
+TEST_ARGS_DICT = {'output_mozdef': False, 'output_stdout': True, 'input_type': 'file', 'output_file': False, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+                  'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'humanizer.log', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
+
 
 class TestConnection():
-    def __init__(self):
-        self.args_dict = {'output_mozdef': False, 'output_stdout': True, 'input_type': 'file', 'output_file': False, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
-                          'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'humanizer.log', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
 
     def test_creation(self):
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
         assert isinstance(connection, Connection)
         assert connection.conn_id == 1245
 
     def test_parse_generic_file_descriptor(self):
         rest = 'fd=34 ACCEPT from IP=192.168.1.1:56822 (IP=0.0.0.0:389)'
 
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
         connection.add_rest(rest)
 
         assert connection.conn_id == 1245
@@ -29,7 +29,7 @@ class TestConnection():
     def test_parse_generic_operation(self):
         rest = 'op=1 BIND dn="mail=user@example.com,o=com,dc=example" method=128'
 
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
         connection.add_rest(rest)
 
         assert connection.conn_id == 1245
@@ -39,7 +39,7 @@ class TestConnection():
     def test_tls_established(self):
         rest = 'fd=34 TLS established tls_ssf = 256 ssf = 256'
 
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
 
         assert connection.conn_id == 1245
         assert len(connection.file_descriptors) == 0
@@ -55,7 +55,7 @@ class TestConnection():
         rest1 = 'fd=34 TLS established tls_ssf = 256 ssf = 256'
         rest2 = 'fd=34 FOO bar tls_ssf = 256 ssf = 256'
 
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
 
         assert connection.conn_id == 1245
         assert len(connection.file_descriptors) == 0
@@ -76,7 +76,7 @@ class TestConnection():
     def test_accept(self):
         rest = 'fd=34 ACCEPT from IP=192.168.1.1:56822 (IP=0.0.0.0:389)'
 
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
 
         assert connection.conn_id == 1245
         assert len(connection.file_descriptors) == 0
@@ -91,7 +91,7 @@ class TestConnection():
     def test_closed(self):
         rest = 'fd=34 closed'
 
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
 
         assert connection.conn_id == 1245
         assert len(connection.file_descriptors) == 0
@@ -109,7 +109,7 @@ class TestConnection():
                  'process': "slapd[1]",
                  'rest': 'fd=34 ACCEPT from IP=192.168.1.1:56822 (IP=0.0.0.0:389)'}
 
-        connection = Connection(1245, self.args_dict)
+        connection = Connection(1245, TEST_ARGS_DICT)
         connection.add_event(event)
 
         assert connection.conn_id == 1245
