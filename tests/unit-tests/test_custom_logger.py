@@ -29,15 +29,26 @@ class TestCustomLogger():
         assert err == ""
 
     def test_stderr(self, capsys):
-        logger = CustomLogger(TEST_CUSTOM_LOGGER_ARGS_DICT)
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'output_stderr': True, 'input_type': 'file', 'output_file': False, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'humanizer.log', 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5'}
+
+        logger = CustomLogger(args_dict)
         logger.log("hello world")
         out, err = capsys.readouterr()
         assert out == ""
         assert err == "hello world\n"
 
+    def test_file_with_blank_file(self):
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False,
+                     'input_file_name': None, 'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': '', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5', 'verbose': True}
+        logger = CustomLogger(TEST_CUSTOM_LOGGER_ARGS_DICT)
+        with pytest.raises(Exception) as excinfo:
+            logger.log("hello world")
+        assert str(excinfo.value) == 'log_type of "file" was chosen, but no log file specified'
+
     def test_file_with_no_file(self):
-        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False,
-                     'input_file_name': None, 'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': '', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False,
+                     'input_file_name': None, 'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5', 'verbose': True}
         logger = CustomLogger(TEST_CUSTOM_LOGGER_ARGS_DICT)
         with pytest.raises(Exception) as excinfo:
             logger.log("hello world")
@@ -45,8 +56,8 @@ class TestCustomLogger():
 
     def test_file_with_nonexistant_file(self):
         filename = "test_file_with_nonexistant_file.txt"
-        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
-                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': filename, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': filename, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5', 'verbose': True}
 
         # Clean up to make sure we don't have an existing file
         try:
@@ -73,8 +84,8 @@ class TestCustomLogger():
 
     def test_file_with_existant_file(self):
         filename = "test_file_with_existant_file.txt"
-        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
-                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': filename, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': filename, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5', 'verbose': True}
 
         # Clean up to make sure we don't have an existing file
         try:
