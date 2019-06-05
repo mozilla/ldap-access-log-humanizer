@@ -41,15 +41,15 @@ class TestCustomLogger():
     def test_file_with_blank_file(self):
         args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False,
                      'input_file_name': None, 'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': '', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5', 'verbose': True}
-        logger = CustomLogger(TEST_CUSTOM_LOGGER_ARGS_DICT)
+        logger = CustomLogger(args_dict)
         with pytest.raises(Exception) as excinfo:
             logger.log("hello world")
         assert str(excinfo.value) == 'log_type of "file" was chosen, but no log file specified'
 
     def test_file_with_no_file(self):
         args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_syslog': False, 'host': '0.0.0.0', 'daemonize': False,
-                     'input_file_name': None, 'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5', 'verbose': True}
-        logger = CustomLogger(TEST_CUSTOM_LOGGER_ARGS_DICT)
+                'input_file_name': None, 'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': None, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514', 'syslog_facility': 'LOG_LOCAL5', 'verbose': True}
+        logger = CustomLogger(args_dict)
         with pytest.raises(Exception) as excinfo:
             logger.log("hello world")
         assert str(excinfo.value) == 'log_type of "file" was chosen, but no log file specified'
