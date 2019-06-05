@@ -73,7 +73,7 @@ class TestCustomLogger():
 
     def test_file_with_existant_file(self):
         filename = "test_file_with_existant_file.txt"
-        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_syslog': False, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
                      'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': filename, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
 
         # Clean up to make sure we don't have an existing file
