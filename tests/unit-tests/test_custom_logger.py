@@ -44,9 +44,9 @@ class TestCustomLogger():
         assert str(excinfo.value) == 'log_type of "file" was chosen, but no log file specified'
 
     def test_file_with_nonexistant_file(self):
-        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
-                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'test_file_with_nonexistant_file.txt', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
         filename = "test_file_with_nonexistant_file.txt"
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': filename, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
 
         # Clean up to make sure we don't have an existing file
         try:
@@ -55,7 +55,7 @@ class TestCustomLogger():
             pass
 
         # Try to log to a file that doesn't yet exist and make sure it creates it
-        logger = CustomLogger("file", filename)
+        logger = CustomLogger(args_dict)
         assert os.path.isfile(filename) == False
         logger.log("hello world")
         assert os.path.isfile(filename) == True
@@ -72,9 +72,9 @@ class TestCustomLogger():
             pass
 
     def test_file_with_existant_file(self):
-        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
-                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': 'test_file_with_existant_file.txt', 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
         filename = "test_file_with_existant_file.txt"
+        args_dict = {'output_mozdef': False, 'output_stdout': False, 'input_type': 'file', 'output_file': True, 'output_sys     log': False, 'host': '0.0.0.0', 'daemonize': False, 'input_file_name': None,
+                     'mozdef_url': 'https://127.0.0.1:8443/events', 'noconfig': False, 'output_file_name': filename, 'output_stderr': False, 'config': 'humanizer_settings.json', 'port': '1514'}
 
         # Clean up to make sure we don't have an existing file
         try:
@@ -91,7 +91,7 @@ class TestCustomLogger():
             assert s == "hello world" + "\n"
 
         # Try to log to a file that does exist and make sure it creates it
-        logger = CustomLogger("file", filename)
+        logger = CustomLogger(args_dict)
         assert os.path.isfile(filename) == True
         logger.log("hello world")
         assert os.path.isfile(filename) == True
