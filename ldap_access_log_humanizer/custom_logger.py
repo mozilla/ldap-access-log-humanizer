@@ -45,7 +45,7 @@ class CustomLogger:
         if self.output_stderr:
             sys.stderr.write(str(data) + "\n")
         if self.output_file:
-            if self.output_file_name is None:
+            if self.output_file_name is None or self.output_file_name == "":
                 raise Exception('log_type of "file" was chosen, but no log file specified')
 
             if os.path.exists(self.output_file_name):
