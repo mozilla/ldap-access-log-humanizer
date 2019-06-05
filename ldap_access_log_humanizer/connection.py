@@ -11,7 +11,7 @@ class Connection:
         self.server = ""
         self.process = ""
         self.operations = {}
-        self.tls = False
+        self.tls_status = False
         self.file_descriptors = []
         self.logger = CustomLogger(args_dict)
 
@@ -33,9 +33,9 @@ class Connection:
     def tls(self):
         for file_descriptor in self.file_descriptors:
             if file_descriptor.verb == "TLS" and file_descriptor.details.startswith("established"):
-                self.tls = True
+                self.tls_status = True
 
-        return self.tls
+        return self.tls_status
 
     def closed(self):
         for file_descriptor in self.file_descriptors:
