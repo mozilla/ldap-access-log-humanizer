@@ -14,7 +14,8 @@ config = {
     'packages': ['ldap_access_log_humanizer'],
     'scripts': ['humanizer.py'],
     'data_files': [('/etc/humanizer', ['humanizer_settings.json.default']),
-        ('/usr/lib/systemd/system', ['humanizer.service'])],
+        ('/usr/lib/systemd/system', ['humanizer.service']),
+        ('/etc/rsyslog.d/', ['humanizer-rsyslog.conf'])],
     'name': 'ldap-access-log-humanizer'
 }
 
