@@ -69,5 +69,5 @@ class CustomLogger:
             msg['details'] = data
 
             resp = requests.post(self.mozdef_url, data=msg)
-            if resp.code != "200":
+            if not resp.ok:
                 print("Failed to post to mozdef")
