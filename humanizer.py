@@ -48,8 +48,7 @@ def main(prog_args=None):
         args_dict['output_stdout'] = True
 
     if args.config:
-        if verbose:
-            print("ignoring command line options and using config")
+        # if we pass a config, we ignore the cli args and just use the config
         with open(args.config) as fd:
             args_dict = json.load(fd)
 
