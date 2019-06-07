@@ -35,7 +35,7 @@ def main(prog_args=None):
 
     if len(sys.argv) == 1:
         args_dict['input_type'] = 'stdin'
-        args_dict['output_type'] = 'stdout'
+        args_dict['output_stdout'] = True
 
     if args.input_file_name:
         args_dict['input_type'] = 'file'
@@ -43,9 +43,9 @@ def main(prog_args=None):
         args_dict['input_type'] = 'syslog'
 
     if args.output_file_name:
-        args_dict['output_type'] = 'file'
+        args_dict['output_file'] = True
     elif not args.output_mozdef or args.output_syslog or args.output_stderr or args.output_file:
-        args_dict['output_type'] = 'stdout'
+        args_dict['output_stdout'] = True
 
     if args.config:
         if verbose:
