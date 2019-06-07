@@ -10,7 +10,8 @@ class SyslogUDPHandler(SocketServer.BaseRequestHandler):
 
     def handle(self):
         data = bytes.decode(self.request[0].strip())
-        data = data.strip('<167>')
+        # openldap logs to local4 facility, which prepends a debug code of <167>
+        data = data.lstrip('<167>')
         socket = self.request[1]
         parser = Parser(data, self.server.args_dict)
         parser.parse_line(str(data))
