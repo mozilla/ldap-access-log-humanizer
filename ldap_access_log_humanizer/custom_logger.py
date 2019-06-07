@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import requests
 import socket
@@ -60,6 +61,9 @@ class CustomLogger:
             syslog.openlog(facility=facility)
             syslog.syslog(str(data))
         if self.output_mozdef:
+            headers = {
+                'Content-type': 'application/json',
+            }
             msg = {}
             msg['timestamp'] = datetime.datetime.utcnow().isoformat()
             msg['hostname'] = socket.getfqdn()
@@ -68,6 +72,6 @@ class CustomLogger:
             msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
             msg['details'] = data
 
-            resp = requests.post(self.mozdef_url, data=msg)
+            resp = requests.post(self.mozdef_url, headers=headers,  data=json.dumps(msg))
             if not resp.ok:
                 print("Failed to post to mozdef")
