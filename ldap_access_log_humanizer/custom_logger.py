@@ -61,12 +61,13 @@ class CustomLogger:
             syslog.syslog(str(data))
         if self.output_mozdef:
             msg = {}
-            msg['timestamp'] = str(datetime.datetime.utcnow())
+            msg['timestamp'] = datetime.datetime.utcnow().isoformat()
             msg['hostname'] = socket.getfqdn()
             msg['category'] = ['ldap']
             msg['tags'] = ['ldap']
             msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
+            msg['details'] = data
 
             resp = requests.post(self.mozdef_url, data=msg)
-            if resp.code != "200":
+            if not resp.ok:
                 print("Failed to post to mozdef")
