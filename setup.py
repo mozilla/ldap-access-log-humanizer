@@ -15,6 +15,7 @@ config = {
     'scripts': ['humanizer.py'],
     'data_files': [('/etc/humanizer', ['humanizer_settings.json.default']),
         ('/usr/lib/systemd/system', ['humanizer.service']),
+        ('/etc/logrotate.d/', ['humanizer-logrotate']),
         ('/etc/rsyslog.d/', ['humanizer-rsyslog.conf'])],
     'name': 'ldap-access-log-humanizer'
 }
