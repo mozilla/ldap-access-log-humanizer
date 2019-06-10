@@ -1,0 +1,12 @@
+/var/log/ldap/humanizer.log {
+    missingok
+    notifempty
+    compress
+    daily
+    rotate 90
+    sharedscripts
+    postrotate
+    # Humanizer logs via syslog, restart syslog if running
+    service rsyslog condrestart
+    endscript
+}
