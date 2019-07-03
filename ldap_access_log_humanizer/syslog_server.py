@@ -5,18 +5,17 @@ except ImportError:
 from ldap_access_log_humanizer.custom_logger import CustomLogger
 from ldap_access_log_humanizer.parser import Parser
 
+syslog_server_parser = None
+
 
 class SyslogUDPHandler(SocketServer.BaseRequestHandler):
-    def __init__(self, parser):
-        SocketServer.BaseRequestHandler.__init__(self)
-        self.parser = parser
-
     def handle(self):
         data = bytes.decode(self.request[0].strip())
         # openldap logs to local4 facility, which prepends a debug code of <167>
         data = data.lstrip('<167>')
         socket = self.request[1]
-        self.parser.parse_line(str(data))
+        global syslog_server_parser
+        syslog_server_parser.parse_line(str(data))
 
 
 class UDPServer(SocketServer.UDPServer):
@@ -34,10 +33,13 @@ class SyslogServer():
         if self.args_dict['port']:
             self.port = self.args_dict['port']
         self.logger = CustomLogger(self.args_dict)
-        self.parser = Parser(None, self.args_dict)
+
+        # Override a parser with appropriate args_dict optioned instance
+        global parser
+        parser = Parser(None, self.args_dict)
 
     def serve(self):
-        server = UDPServer((self.host, int(self.port)), SyslogUDPHandler(self.parser), self.args_dict)
+        server = UDPServer((self.host, int(self.port)), SyslogUDPHandler, self.args_dict)
         server.serve_forever(poll_interval=0.5)
 
     def start_syslog(self):
