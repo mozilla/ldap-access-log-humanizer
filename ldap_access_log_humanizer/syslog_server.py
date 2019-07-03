@@ -35,8 +35,8 @@ class SyslogServer():
         self.logger = CustomLogger(self.args_dict)
 
         # Override a parser with appropriate args_dict optioned instance
-        global parser
-        parser = Parser(None, self.args_dict)
+        global syslog_server_parser
+        syslog_server_parser = Parser(None, self.args_dict)
 
     def serve(self):
         server = UDPServer((self.host, int(self.port)), SyslogUDPHandler, self.args_dict)
