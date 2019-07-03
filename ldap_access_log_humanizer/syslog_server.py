@@ -6,20 +6,24 @@ from ldap_access_log_humanizer.custom_logger import CustomLogger
 from ldap_access_log_humanizer.parser import Parser
 
 
-class SyslogUDPHandler(SocketServer.BaseRequestHandler):
+class CustomSyslogUDPHandler(SocketServer.BaseRequestHandler):
+    def __init__(self, parser):
+        SocketServer.BaseRequestHandler.__init__(self)
+        self.parser = parser
 
     def handle(self):
         data = bytes.decode(self.request[0].strip())
         # openldap logs to local4 facility, which prepends a debug code of <167>
         data = data.lstrip('<167>')
         socket = self.request[1]
-        parser = Parser(data, self.server.args_dict)
-        parser.parse_line(str(data))
+        self.parser.parse_line(str(data))
+
 
 class UDPServer(SocketServer.UDPServer):
     def __init__(self, server_address, RequestHandlerClass, args_dict, bind_and_activate=True):
         SocketServer.UDPServer.__init__(self, server_address, RequestHandlerClass)
         self.args_dict = args_dict
+
 
 class SyslogServer():
 
@@ -30,9 +34,10 @@ class SyslogServer():
         if self.args_dict['port']:
             self.port = self.args_dict['port']
         self.logger = CustomLogger(self.args_dict)
+        self.parser = Parser(None, self.server.args_dict)
 
     def serve(self):
-        server = UDPServer((self.host, int(self.port)), SyslogUDPHandler, self.args_dict)
+        server = UDPServer((self.host, int(self.port)), CustomSyslogUDPHandler(self.parser), self.args_dict)
         server.serve_forever(poll_interval=0.5)
 
     def start_syslog(self):
@@ -49,7 +54,7 @@ class SyslogServer():
                     stderr=out,
                     umask=0o002,
                     pidfile=pidfile.TimeoutPIDLockFile(pidf),
-                    ) as context:
+            ) as context:
                 self.serve()
         else:
             # when running under systemd, we don't need daemonize, just start serving
