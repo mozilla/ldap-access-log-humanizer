@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from ldap_access_log_humanizer.syslog_server import SyslogUDPHandler
+from ldap_access_log_humanizer.syslog_server import CustomSyslogUDPHandler
 from ldap_access_log_humanizer.syslog_server import UDPServer
 from ldap_access_log_humanizer.syslog_server import SyslogServer
 from ldap_access_log_humanizer.parser import Parser
