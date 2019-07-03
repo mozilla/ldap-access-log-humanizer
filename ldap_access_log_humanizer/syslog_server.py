@@ -6,7 +6,7 @@ from ldap_access_log_humanizer.custom_logger import CustomLogger
 from ldap_access_log_humanizer.parser import Parser
 
 
-class CustomSyslogUDPHandler(SocketServer.BaseRequestHandler):
+class SyslogUDPHandler(SocketServer.BaseRequestHandler):
     def __init__(self, parser):
         SocketServer.BaseRequestHandler.__init__(self)
         self.parser = parser
@@ -37,7 +37,7 @@ class SyslogServer():
         self.parser = Parser(None, self.args_dict)
 
     def serve(self):
-        server = UDPServer((self.host, int(self.port)), CustomSyslogUDPHandler(self.parser), self.args_dict)
+        server = UDPServer((self.host, int(self.port)), SyslogUDPHandler(self.parser), self.args_dict)
         server.serve_forever(poll_interval=0.5)
 
     def start_syslog(self):
