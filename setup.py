@@ -9,7 +9,7 @@ config = {
     'url': '',
     'download_url': '',
     'author_email': 'jdow@mozilla, jclaudius@mozilla.com',
-    'version': "0.0.1",
+    'version': "0.0.2",
     'install_requires': ['requests'],
     'packages': ['ldap_access_log_humanizer'],
     'scripts': ['humanizer.py'],
