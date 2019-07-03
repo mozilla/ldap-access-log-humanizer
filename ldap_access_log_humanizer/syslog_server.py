@@ -13,13 +13,14 @@ class SyslogUDPHandler(SocketServer.BaseRequestHandler):
         # openldap logs to local4 facility, which prepends a debug code of <167>
         data = data.lstrip('<167>')
         socket = self.request[1]
-        parser = Parser(data, self.server.args_dict)
-        parser.parse_line(str(data))
+        self.parser.parse_line(str(data))
+
 
 class UDPServer(SocketServer.UDPServer):
     def __init__(self, server_address, RequestHandlerClass, args_dict, bind_and_activate=True):
         SocketServer.UDPServer.__init__(self, server_address, RequestHandlerClass)
         self.args_dict = args_dict
+
 
 class SyslogServer():
 
@@ -30,6 +31,7 @@ class SyslogServer():
         if self.args_dict['port']:
             self.port = self.args_dict['port']
         self.logger = CustomLogger(self.args_dict)
+        self.parser = Parser(None, self.server.args_dict)
 
     def serve(self):
         server = UDPServer((self.host, int(self.port)), SyslogUDPHandler, self.args_dict)
@@ -49,7 +51,7 @@ class SyslogServer():
                     stderr=out,
                     umask=0o002,
                     pidfile=pidfile.TimeoutPIDLockFile(pidf),
-                    ) as context:
+            ) as context:
                 self.serve()
         else:
             # when running under systemd, we don't need daemonize, just start serving
