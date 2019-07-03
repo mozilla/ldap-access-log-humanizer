@@ -34,7 +34,7 @@ class SyslogServer():
         if self.args_dict['port']:
             self.port = self.args_dict['port']
         self.logger = CustomLogger(self.args_dict)
-        self.parser = Parser(None, self.server.args_dict)
+        self.parser = Parser(None, self.args_dict)
 
     def serve(self):
         server = UDPServer((self.host, int(self.port)), CustomSyslogUDPHandler(self.parser), self.args_dict)
