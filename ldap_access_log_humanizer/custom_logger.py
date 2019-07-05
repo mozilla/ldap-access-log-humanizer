@@ -40,38 +40,41 @@ class CustomLogger:
             'LOG_LOCAL7': 184,
         }
 
-    def log(self, data):
-        if self.output_stdout:
-            print(str(data))
-        if self.output_stderr:
-            sys.stderr.write(str(data) + "\n")
-        if self.output_file:
-            if self.output_file_name is None or self.output_file_name == "":
-                raise Exception('log_type of "file" was chosen, but no log file specified')
+    def log(self, data, error=False):
+        if error:
+            print(data)
+        else:
+            if self.output_stdout:
+                print(str(data))
+            if self.output_stderr:
+                sys.stderr.write(str(data) + "\n")
+            if self.output_file:
+                if self.output_file_name is None or self.output_file_name == "":
+                    raise Exception('log_type of "file" was chosen, but no log file specified')
 
-            if os.path.exists(self.output_file_name):
-                append_write = 'a'  # append if already exists
-            else:
-                append_write = 'w'  # make a new file if not
+                if os.path.exists(self.output_file_name):
+                    append_write = 'a'  # append if already exists
+                else:
+                    append_write = 'w'  # make a new file if not
 
-            with open(self.output_file_name, append_write) as f:
-                f.write(str(data) + '\n')
-        if self.output_syslog:
-            facility = self.syslog_map[self.syslog_facility]
-            syslog.openlog(facility=facility)
-            syslog.syslog(str(data))
-        if self.output_mozdef:
-            headers = {
-                'Content-type': 'application/json',
-            }
-            msg = {}
-            msg['timestamp'] = datetime.datetime.utcnow().isoformat()
-            msg['hostname'] = socket.getfqdn()
-            msg['category'] = ['ldap']
-            msg['tags'] = ['ldap']
-            msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
-            msg['details'] = data
+                with open(self.output_file_name, append_write) as f:
+                    f.write(str(data) + '\n')
+            if self.output_syslog:
+                facility = self.syslog_map[self.syslog_facility]
+                syslog.openlog(facility=facility)
+                syslog.syslog(str(data))
+            if self.output_mozdef:
+                headers = {
+                    'Content-type': 'application/json',
+                }
+                msg = {}
+                msg['timestamp'] = datetime.datetime.utcnow().isoformat()
+                msg['hostname'] = socket.getfqdn()
+                msg['category'] = ['ldap']
+                msg['tags'] = ['ldap']
+                msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
+                msg['details'] = data
 
-            resp = requests.post(self.mozdef_url, headers=headers,  data=json.dumps(msg))
-            if not resp.ok:
-                print("Failed to post to mozdef")
+                resp = requests.post(self.mozdef_url, headers=headers,  data=json.dumps(msg))
+                if not resp.ok:
+                    print("Failed to post to mozdef")

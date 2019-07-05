@@ -22,5 +22,5 @@ class RawLogParser:
         else:
             # raise Exception('Failed to parse raw line: {}'.format(line))
             if self.args_dict['verbose']:
-                self.logger.log("ERROR: Failed to parse raw line: {}".format(line))
+                self.logger.log("ERROR: Failed to parse raw line: {}".format(line), error=True)
             return None
