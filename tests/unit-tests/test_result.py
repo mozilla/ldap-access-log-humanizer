@@ -8,5 +8,5 @@ class TestResult():
         result = Result('RESULT tag=97 err=49 text=')
         assert isinstance(result, Result)
         assert result.tag() == 97
-        # assert result.err() == 49
-        # assert result.text() == ''
+        assert result.err() == 49
+        assert result.text() == ''
