@@ -8,9 +8,8 @@ class Result:
         self.raw_result_string = raw_result_string
 
     # Example: RESULT tag=97 err=49 text=
-    # Output Expectation: user@example.com
+    # Output Expectation: 97
     def tag(self):
-        # Regex stolen from: https://stackoverflow.com/questions/42407785/regex-extract-email-from-strings
         pattern = r'tag=([0-9]+)'
         match = re.search(pattern, self.raw_result_string)
         if match:
@@ -20,7 +19,6 @@ class Result:
         return ''
 
     def err(self):
-        # Regex stolen from: https://stackoverflow.com/questions/42407785/regex-extract-email-from-strings
         pattern = r'err=([0-9]+)'
         match = re.search(pattern, self.raw_result_string)
         if match:
@@ -30,7 +28,6 @@ class Result:
         return ''
 
     def text(self):
-        # Regex stolen from: https://stackoverflow.com/questions/42407785/regex-extract-email-from-strings
         pattern = r'text="(.*)"'
         match = re.search(pattern, self.raw_result_string)
         if match:
