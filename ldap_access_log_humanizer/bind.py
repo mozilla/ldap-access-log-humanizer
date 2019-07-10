@@ -39,8 +39,6 @@ class Bind:
 
         # If we don't exact match, default to unknown
         return ''
-<<<<<<< HEAD
-=======
 
     def dn(self):
         pattern = r'dn="(.*)"'
@@ -71,4 +69,3 @@ class Bind:
 
         # If we don't exact match, default to unknown
         return ''
->>>>>>> fix_index_error_in_operation
