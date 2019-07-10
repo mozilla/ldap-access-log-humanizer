@@ -10,3 +10,5 @@ class TestResult():
         assert result.tag() == 97
         assert result.err() == 49
         assert result.text() == ''
+        assert result.verb() == 'RESULT'
+        assert result.rest() == 'tag=97 err=49 text='

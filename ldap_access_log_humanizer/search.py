@@ -1,26 +1,26 @@
 import re
 
-# A class to parse and better understand BIND strings
+# A class to parse and better understand SRCH strings
 
 
-class GenericVerb:
+class Search:
     def __init__(self, raw_string):
         self.raw_string = raw_string
 
     def verb(self):
-        tokenized_verb_string = self.raw_string.split(" ")
+        tokenized_string = self.raw_string.split(" ")
 
         # Check to see if we got a full (verb included) or partial string
-        if tokenized_verb_string[0].isupper():
-            return tokenized_verb_string[0]
+        if tokenized_string[0].isupper():
+            return tokenized_string[0]
 
         return ''
 
     def rest(self):
-        tokenized_verb_string = self.raw_string.split(" ")
+        tokenized_string = self.raw_string.split(" ")
 
-        if len(tokenized_verb_string) > 1:
-            return " ".join(tokenized_verb_string[1:])
+        if len(tokenized_string) > 1:
+            return " ".join(tokenized_string[1:])
 
         return ''
 

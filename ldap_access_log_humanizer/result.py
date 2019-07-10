@@ -1,17 +1,41 @@
 import re
 
-# A class to parse and better understand RESULT strings
+# A class to parse and better understand RESULT and SEARCH RESULT strings
 
 
 class Result:
-    def __init__(self, raw_result_string):
-        self.raw_result_string = raw_result_string
+    def __init__(self, raw_string):
+        self.raw_string = raw_string
+
+    def verb(self):
+        tokenized_string = self.raw_string.split(" ")
+
+        # Check to see if we got a full (verb included) or partial string
+        if tokenized_string[0].isupper():
+            return tokenized_string[0]
+
+        return ''
+
+    def rest(self):
+        tokenized_string = self.raw_string.split(" ")
+
+        if len(tokenized_string) > 1:
+            return " ".join(tokenized_string[1:])
+
+        return ''
+
+    def append(self, raw_string):
+        tokenized_string = raw_string.split(" ")
+
+        if len(tokenized_string) > 1:
+            self.raw_string += " "
+            self.raw_string += " ".join(tokenized_string[1:])
 
     # Example: RESULT tag=97 err=49 text=
     # Output Expectation: 97
     def tag(self):
         pattern = r'tag=([0-9]+)'
-        match = re.search(pattern, self.raw_result_string)
+        match = re.search(pattern, self.raw_string)
         if match:
             return int(match.group(1))
 
@@ -20,7 +44,7 @@ class Result:
 
     def err(self):
         pattern = r'err=([0-9]+)'
-        match = re.search(pattern, self.raw_result_string)
+        match = re.search(pattern, self.raw_string)
         if match:
             return int(match.group(1))
 
@@ -29,7 +53,7 @@ class Result:
 
     def text(self):
         pattern = r'text="(.*)"'
-        match = re.search(pattern, self.raw_result_string)
+        match = re.search(pattern, self.raw_string)
         if match:
             return int(match.group(1))
 
