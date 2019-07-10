@@ -39,3 +39,36 @@ class Bind:
 
         # If we don't exact match, default to unknown
         return ''
+<<<<<<< HEAD
+=======
+
+    def dn(self):
+        pattern = r'dn="(.*)"'
+        match = re.search(pattern, self.raw_bind_string)
+        if match:
+            if match.group(1):
+                return match.group(1)
+
+        # If we don't exact match, default to unknown
+        return ''
+
+    def o(self):
+        pattern = r'o=([a-zA-Z0-9]+)'
+        match = re.search(pattern, self.raw_bind_string)
+        if match:
+            if match.group(1):
+                return match.group(1)
+
+        # If we don't exact match, default to unknown
+        return ''
+
+    def dc(self):
+        pattern = r'dc=([a-zA-Z0-9]+)'
+        match = re.search(pattern, self.raw_bind_string)
+        if match:
+            if match.group(1):
+                return match.group(1)
+
+        # If we don't exact match, default to unknown
+        return ''
+>>>>>>> fix_index_error_in_operation

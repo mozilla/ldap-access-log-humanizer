@@ -136,19 +136,21 @@ class Operation:
                 if tokenized_rest[0] == self.requests[0]["verb"]:
                     # Our splitting on space character doesn't work for attr list in a SRCH operation,
                     # so we need to treat those lines differently, and create a list of attributes
-                    if tokenized_rest[1:][0].startswith("attr="):
-                        attrs = []
-                        for attr in tokenized_rest[1:]:
-                            if "=" in attr:
-                                attrs.append(attr.split("=")[1])
-                            else:
-                                attrs.append(attr)
-                        self.requests[0]["details"].append("attrs=" + ",".join(attrs))
-                    else:
-                        self.requests[0]["details"].extend(tokenized_rest[1:])
-                        self.requests[0]["details"] = list(set(self.requests[0]["details"]))
+                    if len(tokenized_rest) > 1:
+                        if tokenized_rest[1:][0].startswith("attr="):
+                            attrs = []
+                            for attr in tokenized_rest[1:]:
+                                if "=" in attr:
+                                    attrs.append(attr.split("=")[1])
+                                else:
+                                    attrs.append(attr)
+                            self.requests[0]["details"].append("attrs=" + ",".join(attrs))
+                        else:
+                            self.requests[0]["details"].extend(tokenized_rest[1:])
+                            self.requests[0]["details"] = list(set(self.requests[0]["details"]))
                 else:
-                    self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+                    if len(tokenized_rest) > 1:
+                        self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
             else:
                 self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
         elif tokenized_rest[0] == "RESULT":
