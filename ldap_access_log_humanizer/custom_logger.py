@@ -70,7 +70,7 @@ class CustomLogger:
                 msg = {}
                 msg['timestamp'] = datetime.datetime.utcnow().isoformat()
                 msg['hostname'] = socket.getfqdn()
-                msg['category'] = ['ldap']
+                msg['category'] = 'ldap'
                 msg['tags'] = ['ldap']
                 msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
                 msg['details'] = data
