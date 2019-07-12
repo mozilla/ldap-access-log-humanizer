@@ -1,4 +1,8 @@
 import re
+from ldap_access_log_humanizer.bind import Bind
+from ldap_access_log_humanizer.result import Result
+from ldap_access_log_humanizer.search import Search
+from ldap_access_log_humanizer.generic_verb import GenericVerb
 
 LDAP_ERROR_CODES = {
     # Indicates the requested client operation completed successfully.
@@ -97,9 +101,8 @@ LDAP_ERROR_CODES = {
 class Operation:
     def __init__(self, op_id):
         self.op_id = op_id
-        self.requests = []
-        self.response_verb = ""
-        self.response_verb_details = set()
+        self.request = None
+        self.result = None
         self.error = ""
 
     def add_error(self, rest):
@@ -115,77 +118,49 @@ class Operation:
             self.error = LDAP_ERROR_CODES[int(match.group(1))]
 
     def add_event(self, rest):
-        verbs = [
-            "ADD",
-            "MOD",
-            "PASSMOD",
-            "BIND",
-            "SRCH",
-            "EXT",
-            "STARTTLS",
-            "UNBIND",
-            "CMP",
-            "WHOAMI",
-        ]
-        tokenized_rest = rest.split(" ")
 
-        if tokenized_rest[0] in verbs:
-            # If we get two lines of log output with the same operation and the same verb, it's a continuation,
-            # so check if we've already processed one
-            if len(self.requests) > 0:
-                if tokenized_rest[0] == self.requests[0]["verb"]:
-                    # Our splitting on space character doesn't work for attr list in a SRCH operation,
-                    # so we need to treat those lines differently, and create a list of attributes
-                    if len(tokenized_rest) > 1:
-                        if tokenized_rest[1:][0].startswith("attr="):
-                            attrs = []
-                            for attr in tokenized_rest[1:]:
-                                if "=" in attr:
-                                    attrs.append(attr.split("=")[1])
-                                else:
-                                    attrs.append(attr)
-                            self.requests[0]["details"].append("attrs=" + ",".join(attrs))
-                        else:
-                            self.requests[0]["details"].extend(tokenized_rest[1:])
-                            self.requests[0]["details"] = list(set(self.requests[0]["details"]))
-                else:
-                    if len(tokenized_rest) > 1:
-                        self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
+        # Handle all result types
+        if rest.startswith("RESULT") or rest.startswith("SRCH RESULT"):
+            if self.result == None:
+                self.result = Result(rest)
+            elif self.result.verb() == "RESULT":
+                self.result.append(Result(rest))
             else:
-                self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
-        elif tokenized_rest[0] == "RESULT":
-            self.response_verb = "RESULT"
-            self.response_verb_details.update(tokenized_rest[1:])
-        elif tokenized_rest[0] == "SEARCH" and tokenized_rest[1] == "RESULT":
-            self.response_verb = "SEARCH RESULT"
-            self.response_verb_details.update(tokenized_rest[2:])
-        elif tokenized_rest[0] == "ABANDON":
-            self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
-            self.response_verb = "None"
+                raise Exception("Multi-VERB operation not supported")
+
+        # Handle all request types
+        if rest.startswith("BIND"):
+            if self.request == None:
+                self.request = Bind(rest)
+            elif self.request.verb() == "BIND":
+                self.request.append(Bind(rest))
+            else:
+                raise Exception("Multi-VERB operation not supported")
+        elif rest.startswith("SRCH"):
+            if self.request == None:
+                self.request = Search(rest)
+            elif self.request.verb() == "SRCH":
+                self.request.append(Search(rest))
+            else:
+                raise Exception("Multi-VERB operation not supported")
         else:
-            # This is just a catch all until we exhaust the supported verbs
-            raise Exception("Unsupported VERB in: {}".format(rest))
-
-        # Sort the requests details, to make it more deterministic
-        for request in self.requests:
-            request["details"] = sorted(request["details"])
-
-        self.add_error(rest)
+            if self.request == None:
+                self.request = GenericVerb(rest)
+            elif self.request.verb() == rest.split(" ")[0]:
+                self.request.append(GenericVerb(rest))
+            else:
+                raise Exception("Multi-VERB operation not supported")
 
     def dict(self):
         return {
             "op_id": self.op_id,
-            "requests": self.requests,
-            "response": {
-                "verb": self.response_verb,
-                "details": sorted(list(self.response_verb_details)),
-                "error": self.error,
-            },
+            "request": self.request.dict(),
+            "result": self.result.dict(),
         }
 
     def loggable(self):
         # We only want to log op, when we have a result/response
-        if self.response_verb == "":
+        if self.result == None:
             return False
         else:
             return True

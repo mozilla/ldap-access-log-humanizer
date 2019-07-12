@@ -7,6 +7,12 @@ class GenericVerb:
     def __init__(self, raw_string):
         self.raw_string = raw_string
 
+    def dict(self):
+        return {
+            "verb": self.verb(),
+            "rest": self.rest(),
+        }
+
     def verb(self):
         tokenized_verb_string = self.raw_string.split(" ")
 

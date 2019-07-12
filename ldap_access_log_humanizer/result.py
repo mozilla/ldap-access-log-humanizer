@@ -7,6 +7,15 @@ class Result:
     def __init__(self, raw_string):
         self.raw_string = raw_string
 
+    def dict(self):
+        return {
+            "verb": self.verb(),
+            "rest": self.rest(),
+            "tag": self.tag(),
+            "err": self.err(),
+            "text": self.text()
+        }
+
     def verb(self):
         tokenized_string = self.raw_string.split(" ")
 

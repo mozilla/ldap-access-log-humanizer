@@ -7,6 +7,18 @@ class Bind:
     def __init__(self, raw_string):
         self.raw_string = raw_string
 
+    def dict(self):
+        return {
+            "verb": self.verb(),
+            "rest": self.rest(),
+            "mail": self.mail(),
+            "version": self.version(),
+            "method": self.method(),
+            "dn": self.dn(),
+            "o": self.o(),
+            "dc": self.dc()
+        }
+
     def verb(self):
         tokenized_string = self.raw_string.split(" ")
 

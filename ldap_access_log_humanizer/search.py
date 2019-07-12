@@ -7,6 +7,17 @@ class Search:
     def __init__(self, raw_string):
         self.raw_string = raw_string
 
+    def dict(self):
+        return {
+            "verb": self.verb(),
+            "rest": self.rest(),
+            "base": self.base(),
+            "scope": self.scope(),
+            "deref": self.deref(),
+            "filter": self.filter()
+
+        }
+
     def verb(self):
         tokenized_string = self.raw_string.split(" ")
 
@@ -30,3 +41,39 @@ class Search:
         if len(tokenized_string) > 1:
             self.raw_string += " "
             self.raw_string += " ".join(tokenized_string[1:])
+
+    def base(self):
+        pattern = r'base="([a-zA-Z0-9=,]+)"'
+        match = re.search(pattern, self.raw_string)
+        if match:
+            return match.group(1)
+
+        # If we don't exact match, default to unknown
+        return ''
+
+    def scope(self):
+        pattern = r'scope=([0-9]+)'
+        match = re.search(pattern, self.raw_string)
+        if match:
+            return int(match.group(1))
+
+        # If we don't exact match, default to unknown
+        return ''
+
+    def deref(self):
+        pattern = r'deref=([0-9]+)'
+        match = re.search(pattern, self.raw_string)
+        if match:
+            return int(match.group(1))
+
+        # If we don't exact match, default to unknown
+        return ''
+
+    def filter(self):
+        pattern = r'filter="([a-zA-Z0-9=_\(\)]+)"'
+        match = re.search(pattern, self.raw_string)
+        if match:
+            return match.group(1)
+
+        # If we don't exact match, default to unknown
+        return ''

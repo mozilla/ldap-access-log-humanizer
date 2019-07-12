@@ -1,10 +1,30 @@
 language: python
-python:
-  - "2.7"  
-  - "3.6"
-# command to install dependencies
-install:
-  - make dependencies
-# command to run tests
-script:
-  - make tests
+
+matrix:
+  include:
+  - python: "2.7"
+    env: LABEL=2_7_unit_tests
+    install:
+      - make dependencies
+    script:
+      - make tests
+  - python: "3.6"
+    env: LABEL=3_6_unit_tests
+    install:
+      - make dependencies
+    script:
+      - make tests
+  - python: "2.7"
+    env: LABEL=2_7_rpm_build_docker
+    services:
+      - docker
+    script:
+      - docker build -t fpm-centos6 .
+      - docker run -it fpm-centos6 make rpm
+  - python: "3.6"
+    env: LABEL=3_6_rpm_build_docker
+    services:
+      - docker
+    script:
+      - docker build -t fpm-centos6 .
+      - docker run -it fpm-centos6 make rpm

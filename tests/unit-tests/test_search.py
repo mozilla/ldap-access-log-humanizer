@@ -9,6 +9,10 @@ class TestSearch():
         assert isinstance(search, Search)
         assert search.verb() == 'SRCH'
         assert search.rest() == 'base="ou=groups,dc=example" scope=2 deref=0 filter="(cn=group_name)"'
+        assert search.base() == 'ou=groups,dc=example'
+        assert search.scope() == 2
+        assert search.deref() == 0
+        assert search.filter() == '(cn=group_name)'
 
     def test_append(self):
         search = Search('SRCH base="ou=groups,dc=example" scope=2 deref=0 filter="(cn=group_name)"')
