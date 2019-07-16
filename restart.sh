@@ -1,1 +1,1 @@
-systemctl start humanizer.service
+systemctl restart humanizer.service
