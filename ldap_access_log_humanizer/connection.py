@@ -2,6 +2,7 @@ import re
 from ldap_access_log_humanizer.file_descriptor import FileDescriptor
 from ldap_access_log_humanizer.operation import Operation
 from ldap_access_log_humanizer.custom_logger import CustomLogger
+import datetime
 
 
 class Connection:
@@ -14,6 +15,7 @@ class Connection:
         self.tls_status = False
         self.file_descriptors = []
         self.logger = CustomLogger(args_dict)
+        self.last_updated = datetime.datetime.now()
 
     def dict(self):
         return {
@@ -102,6 +104,7 @@ class Connection:
         self.server = event['server']
         self.process = event['process']
         self.add_rest(event['rest'])
+        self.last_updated = datetime.datetime.now()
 
     def add_rest(self, rest):
         if rest.startswith('op'):

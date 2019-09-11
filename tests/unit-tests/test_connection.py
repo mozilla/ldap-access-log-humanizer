@@ -10,11 +10,17 @@ TEST_CONNECTION_ARGS_DICT = {'output_mozdef': False, 'output_stdout': True, 'inp
 
 
 class TestConnection():
-
     def test_creation(self):
         connection = Connection(1245, TEST_CONNECTION_ARGS_DICT)
         assert isinstance(connection, Connection)
         assert connection.conn_id == 1245
+        assert connection.time == ""
+        assert connection.server == ""
+        assert connection.process == ""
+        assert connection.operations == {}
+        assert connection.tls_status == False
+        assert connection.file_descriptors == []
+        assert isinstance(connection.last_updated, datetime.datetime)
 
     def test_parse_generic_file_descriptor(self):
         rest = 'fd=34 ACCEPT from IP=192.168.1.1:56822 (IP=0.0.0.0:389)'
