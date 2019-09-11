@@ -3,6 +3,8 @@ import re
 LDAP_ERROR_CODES = {
     # Indicates the requested client operation completed successfully.
     0: "LDAP_SUCCESS",
+    # Indicates that the associated request was out of sequence with another operation in progress (e.g., a non-bind request in the middle of a multi-stage SASL bind).It does not indicate that the client has sent an erroneous message.
+    1: "LDAP_OPERATIONS_ERROR",
     # Indicates that the server has received an invalid or malformed request from the client.
     2: "LDAP_PROTOCOL_ERROR",
     # Indicates that the operation's time limit specified by either the client or the server has been exceeded. On search operations, incomplete results are returned.
