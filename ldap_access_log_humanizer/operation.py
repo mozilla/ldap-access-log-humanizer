@@ -112,7 +112,7 @@ class Operation:
 
         # If there was an error, add text error value (so humans can understand)
         if match:
-            self.error = LDAP_ERROR_CODES[int(match.group(1))]
+            self.error = LDAP_ERROR_CODES.get(int(match.group(1)))
 
     def add_event(self, rest):
         verbs = [
