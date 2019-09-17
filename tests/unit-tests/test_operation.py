@@ -25,6 +25,19 @@ class TestOperation():
         assert operation.response_verb == ""
         assert operation.response_verb_details == set()
 
+    def test_add_del(self):
+        rest = 'DEL dn="cn=foo@example.com,ou=distribution_lists,dc=example"'
+
+        operation = Operation(0)
+        operation.add_event(rest)
+
+        assert isinstance(operation, Operation)
+        assert operation.op_id == 0
+        assert operation.requests == [{"verb": "DEL", "details": [
+            'dn="cn=foo@example.com,ou=distribution_lists,dc=example"']}]
+        assert operation.response_verb == ""
+        assert operation.response_verb_details == set()
+
     def test_add_bind_multiple(self):
         rest = 'BIND dn="uid=bind-generateusers,ou=logins,dc=example" method=128'
         rest2 = 'BIND dn="uid=bind-generateusers,ou=logins,dc=example" mech=SIMPLE ssf=0'
