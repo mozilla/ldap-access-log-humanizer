@@ -128,6 +128,7 @@ class Operation:
             "UNBIND",
             "CMP",
             "WHOAMI",
+            "DEL"
         ]
         tokenized_rest = rest.split(" ")
 
