@@ -3,6 +3,8 @@ import re
 LDAP_ERROR_CODES = {
     # Indicates the requested client operation completed successfully.
     0: "LDAP_SUCCESS",
+    # Indicates that the associated request was out of sequence with another operation in progress (e.g., a non-bind request in the middle of a multi-stage SASL bind).It does not indicate that the client has sent an erroneous message.
+    1: "LDAP_OPERATIONS_ERROR",
     # Indicates that the server has received an invalid or malformed request from the client.
     2: "LDAP_PROTOCOL_ERROR",
     # Indicates that the operation's time limit specified by either the client or the server has been exceeded. On search operations, incomplete results are returned.
@@ -112,7 +114,7 @@ class Operation:
 
         # If there was an error, add text error value (so humans can understand)
         if match:
-            self.error = LDAP_ERROR_CODES[int(match.group(1))]
+            self.error = LDAP_ERROR_CODES.get(int(match.group(1)), "UNKNOWN")
 
     def add_event(self, rest):
         verbs = [
@@ -126,6 +128,7 @@ class Operation:
             "UNBIND",
             "CMP",
             "WHOAMI",
+            "DEL"
         ]
         tokenized_rest = rest.split(" ")
 
