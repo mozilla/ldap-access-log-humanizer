@@ -13,6 +13,7 @@ class Connection:
         self.operations = {}
         self.tls_status = False
         self.file_descriptors = []
+        self.authenticated_status = False
         self.logger = CustomLogger(args_dict)
 
     def dict(self):
@@ -21,7 +22,8 @@ class Connection:
             "time": self.time,
             "client": self.client(),
             "server": self.server,
-            "tls": self.tls()
+            "tls": self.tls(),
+            "authenticated": self.authenticated(),
         }
 
     def reconstitute(self, event_dict):
@@ -29,6 +31,13 @@ class Connection:
         combined_dict.update(self.dict())
         combined_dict.update(event_dict)
         return combined_dict
+
+    def authenticated(self):
+        for operation in self.operations:
+            if operation.response_verb == "RESULT" and "LDAP_SUCCESS" in response_verb_details:
+                self.authenticated_status = True
+
+        return self.authenticated_status
 
     def tls(self):
         for file_descriptor in self.file_descriptors:
