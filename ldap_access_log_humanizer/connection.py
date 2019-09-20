@@ -14,6 +14,7 @@ class Connection:
         self.tls_status = False
         self.file_descriptors = []
         self.authenticated_status = False
+        self.bind_user = ""
         self.logger = CustomLogger(args_dict)
 
     def dict(self):
@@ -24,6 +25,7 @@ class Connection:
             "server": self.server,
             "tls": self.tls(),
             "authenticated": self.authenticated(),
+            "user": self.user(),
         }
 
     def reconstitute(self, event_dict):
@@ -38,6 +40,19 @@ class Connection:
                 self.authenticated_status = True
 
         return self.authenticated_status
+
+    def user(self):
+        email_regex = r'.*mail=([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)'
+
+        for operation in self.operations:
+            for request in operation.requests:
+                if request["verb"] == "BIND":
+                    for detail in request["details"]:
+                        match_object = re.match(email_regex, detail)
+                        if match_object:
+                            self.bind_user = match_object.group(1)
+
+        return self.bind_user
 
     def tls(self):
         for file_descriptor in self.file_descriptors:

@@ -85,14 +85,35 @@ class TestConnection():
         assert connection.authenticated() == False
 
         connection.add_rest(rest1)
-        assert len(connection.file_descriptors) == 1
-        assert len(connection.operations) == 0
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
         assert connection.authenticated() == False
 
         connection.add_rest(rest2)
-        assert len(connection.file_descriptors) == 2
-        assert len(connection.operations) == 0
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
         assert connection.authenticated() == True
+
+    def test_user(self):
+        rest1 = 'op=1 BIND dn="mail=user@example.com,o=com,dc=example" method=128'
+        rest2 = 'op=1 RESULT tag=97 err=49 text='
+
+        connection = Connection(1245, TEST_CONNECTION_ARGS_DICT)
+
+        assert connection.conn_id == 1245
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 0
+        assert connection.user() == ""
+
+        connection.add_rest(rest1)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.user() == "user@example.com"
+
+        connection.add_rest(rest2)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.user() == "user@example.com"
 
     def test_accept(self):
         rest = 'fd=34 ACCEPT from IP=192.168.1.1:56822 (IP=0.0.0.0:389)'
