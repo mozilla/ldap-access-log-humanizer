@@ -14,6 +14,7 @@ class Connection:
         self.tls_status = False
         self.file_descriptors = []
         self.logger = CustomLogger(args_dict)
+        self.authenticated_status = False
 
     def dict(self):
         return {
@@ -21,7 +22,8 @@ class Connection:
             "time": self.time,
             "client": self.client(),
             "server": self.server,
-            "tls": self.tls()
+            "tls": self.tls(),
+            "authenticated": self.authenticated()
         }
 
     def reconstitute(self, event_dict):
@@ -29,6 +31,15 @@ class Connection:
         combined_dict.update(self.dict())
         combined_dict.update(event_dict)
         return combined_dict
+
+    def authenticated(self):
+        # requirements: single operation where we have a BIND verb followed by an LDAP_SUCCESS
+        for operation in self.operations:
+            for request in operation.requests:
+                if request.get("verb") == "BIND" and operation.response_verb == "RESULT" and operation.error == "LDAP_SUCCESS":
+                    self.authenticated_status = True
+
+        return self.authenticated_status
 
     def tls(self):
         for file_descriptor in self.file_descriptors:

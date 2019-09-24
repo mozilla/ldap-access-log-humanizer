@@ -36,6 +36,27 @@ class TestConnection():
         assert len(connection.file_descriptors) == 0
         assert len(connection.operations) == 1
 
+  def test_authenticated(self):
+        rest1 = 'op=1 BIND dn="mail=user@example.com,o=com,dc=example" method=128'
+        rest2 = 'op=1 RESULT tag=97 err=49 text='
+
+        connection = Connection(1245, TEST_CONNECTION_ARGS_DICT)
+
+        assert connection.conn_id == 1245
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 0
+        assert connection.authenticated() == False
+
+        connection.add_rest(rest1)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == False
+
+        connection.add_rest(rest2)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == True
+
     def test_tls_established(self):
         rest = 'fd=34 TLS established tls_ssf = 256 ssf = 256'
 
