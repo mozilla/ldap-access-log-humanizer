@@ -36,7 +36,7 @@ class TestConnection():
         assert len(connection.file_descriptors) == 0
         assert len(connection.operations) == 1
 
-  def test_authenticated(self):
+    def test_authenticated(self):
         rest1 = 'op=1 BIND dn="mail=user@example.com,o=com,dc=example" method=128'
         rest2 = 'op=1 RESULT tag=97 err=49 text='
 
