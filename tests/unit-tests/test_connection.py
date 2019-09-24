@@ -38,7 +38,7 @@ class TestConnection():
 
     def test_authenticated(self):
         rest1 = 'op=1 BIND dn="mail=user@example.com,o=com,dc=example" method=128'
-        rest2 = 'op=1 RESULT tag=97 err=49 text='
+        rest2 = 'op=1 RESULT tag=97 err=0 text='
 
         connection = Connection(1245, TEST_CONNECTION_ARGS_DICT)
 
@@ -46,16 +46,19 @@ class TestConnection():
         assert len(connection.file_descriptors) == 0
         assert len(connection.operations) == 0
         assert connection.authenticated() == False
+        assert connection.user == ""
 
         connection.add_rest(rest1)
         assert len(connection.file_descriptors) == 0
         assert len(connection.operations) == 1
         assert connection.authenticated() == False
+        assert connection.user == ""
 
         connection.add_rest(rest2)
         assert len(connection.file_descriptors) == 0
         assert len(connection.operations) == 1
         assert connection.authenticated() == True
+        assert connection.user == "user@example.com"
 
     def test_tls_established(self):
         rest = 'fd=34 TLS established tls_ssf = 256 ssf = 256'
@@ -137,18 +140,10 @@ class TestConnection():
         assert len(connection.file_descriptors) == 1
         assert len(connection.operations) == 0
 
-        assert connection.dict() == {'client': '192.168.1.1',
+        assert connection.dict() == {'authenticated': False,
+                                     'client': '192.168.1.1',
                                      'conn_id': 1245,
                                      'server': 'foo.example.com',
                                      'time': 'now',
-                                     'tls': False}
-
-        file_descriptor = connection.file_descriptors[0]
-        assert connection.reconstitute(file_descriptor.dict()) == {'client': '192.168.1.1',
-                                                                   'conn_id': 1245,
-                                                                   'details': 'from IP=192.168.1.1:56822 (IP=0.0.0.0:389)',
-                                                                   'fd_id': 34,
-                                                                   'server': 'foo.example.com',
-                                                                   'time': 'now',
-                                                                   'tls': False,
-                                                                   'verb': 'ACCEPT'}
+                                     'tls': False,
+                                     'user': ''}
