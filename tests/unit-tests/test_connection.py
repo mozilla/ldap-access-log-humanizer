@@ -52,7 +52,7 @@ class TestConnection():
         assert len(connection.file_descriptors) == 0
         assert len(connection.operations) == 1
         assert connection.authenticated() == False
-        assert connection.user == ""
+        assert connection.user == "user@example.com"
 
         connection.add_rest(rest2)
         assert len(connection.file_descriptors) == 0
