@@ -14,6 +14,8 @@ class Connection:
         self.tls_status = False
         self.file_descriptors = []
         self.logger = CustomLogger(args_dict)
+        self.authenticated_status = False
+        self.user = ""
 
     def dict(self):
         return {
@@ -21,7 +23,9 @@ class Connection:
             "time": self.time,
             "client": self.client(),
             "server": self.server,
-            "tls": self.tls()
+            "tls": self.tls(),
+            "authenticated": self.authenticated(),
+            "user": self.user
         }
 
     def reconstitute(self, event_dict):
@@ -29,6 +33,25 @@ class Connection:
         combined_dict.update(self.dict())
         combined_dict.update(event_dict)
         return combined_dict
+
+    def authenticated(self):
+        email_regex = r'.*mail=([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)'
+
+        # requirements: single operation where we have a BIND verb followed by an LDAP_SUCCESS
+        for operation in self.operations.values():
+            for request in operation.requests:
+                if request.get("verb") == "BIND":
+                    # Set user (even if they aren't authenticated, so we can track attempts)
+                    for detail in request.get("details"):
+                        match_object = re.match(email_regex, detail)
+                        if match_object:
+                            self.user = match_object.group(1)
+
+                    # Set status if that user was successful
+                    if operation.response_verb == "RESULT" and operation.error == "LDAP_SUCCESS":
+                        self.authenticated_status = True
+
+        return self.authenticated_status
 
     def tls(self):
         for file_descriptor in self.file_descriptors:
