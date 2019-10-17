@@ -35,7 +35,8 @@ class Connection:
         return combined_dict
 
     def authenticated(self):
-        email_regex = r'.*mail=([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)'
+        mail_regex = r'.*mail=([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)'
+        uid_regex = r'.*uid=([a-zA-Z0-9._-]+)'
 
         # requirements: single operation where we have a BIND verb followed by an LDAP_SUCCESS
         for operation in self.operations.values():
@@ -43,9 +44,13 @@ class Connection:
                 if request.get("verb") == "BIND":
                     # Set user (even if they aren't authenticated, so we can track attempts)
                     for detail in request.get("details"):
-                        match_object = re.match(email_regex, detail)
-                        if match_object:
-                            self.user = match_object.group(1)
+                        mail_match_object = re.match(mail_regex, detail)
+                        if mail_match_object:
+                            self.user = mail_match_object.group(1)
+
+                        uid_match_object = re.match(uid_regex, detail)
+                        if uid_match_object:
+                            self.user = uid_match_object.group(1)
 
                     # Set status if that user was successful
                     if operation.response_verb == "RESULT" and operation.error == "LDAP_SUCCESS":
