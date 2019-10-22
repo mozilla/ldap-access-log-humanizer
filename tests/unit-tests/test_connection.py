@@ -36,6 +36,92 @@ class TestConnection():
         assert len(connection.file_descriptors) == 0
         assert len(connection.operations) == 1
 
+    def test_authenticated_mail(self):
+        rest1 = 'op=1 BIND dn="mail=user@example.com,o=com,dc=example" method=128'
+        rest2 = 'op=1 RESULT tag=97 err=0 text='
+
+        connection = Connection(1245, TEST_CONNECTION_ARGS_DICT)
+
+        assert connection.conn_id == 1245
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 0
+        assert connection.authenticated() == False
+        assert connection.user == ""
+
+        connection.add_rest(rest1)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == False
+        assert connection.user == "user@example.com"
+
+        connection.add_rest(rest2)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == True
+        assert connection.user == "user@example.com"
+
+    def test_authenticated_mail_failure_via_authd_bind_user(self):
+        rest1 = 'op=1 BIND dn="mail=user1@example.com,o=com,dc=example" method=128'
+        rest2 = 'op=1 RESULT tag=97 err=0 text='
+        rest3 = 'op=2 BIND dn="mail=user2@example.com,o=com,dc=example" method=128'
+        rest4 = 'op=2 RESULT err=49, tag=97, text='
+
+        connection = Connection(1245, TEST_CONNECTION_ARGS_DICT)
+
+        assert connection.conn_id == 1245
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 0
+        assert connection.authenticated() == False
+        assert connection.user == ""
+
+        connection.add_rest(rest1)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == False
+        assert connection.user == "user1@example.com"
+
+        connection.add_rest(rest2)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == True
+        assert connection.user == "user1@example.com"
+
+        connection.add_rest(rest3)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 2
+        assert connection.authenticated() == True
+        assert connection.user == "user2@example.com"
+
+        connection.add_rest(rest4)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 2
+        assert connection.authenticated() == True
+        assert connection.user == "user2@example.com"
+
+    def test_authenticated_uid(self):
+        rest1 = 'op=1 BIND dn="uid=foo-bar,ou=logins,dc=mozilla" method=128 mech=SIMPLE method=128 ssf=0'
+        rest2 = 'op=1 RESULT tag=97 err=0 text='
+
+        connection = Connection(1245, TEST_CONNECTION_ARGS_DICT)
+
+        assert connection.conn_id == 1245
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 0
+        assert connection.authenticated() == False
+        assert connection.user == ""
+
+        connection.add_rest(rest1)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == False
+        assert connection.user == "foo-bar"
+
+        connection.add_rest(rest2)
+        assert len(connection.file_descriptors) == 0
+        assert len(connection.operations) == 1
+        assert connection.authenticated() == True
+        assert connection.user == "foo-bar"
+
     def test_tls_established(self):
         rest = 'fd=34 TLS established tls_ssf = 256 ssf = 256'
 
@@ -116,18 +202,10 @@ class TestConnection():
         assert len(connection.file_descriptors) == 1
         assert len(connection.operations) == 0
 
-        assert connection.dict() == {'client': '192.168.1.1',
+        assert connection.dict() == {'authenticated': False,
+                                     'client': '192.168.1.1',
                                      'conn_id': 1245,
                                      'server': 'foo.example.com',
                                      'time': 'now',
-                                     'tls': False}
-
-        file_descriptor = connection.file_descriptors[0]
-        assert connection.reconstitute(file_descriptor.dict()) == {'client': '192.168.1.1',
-                                                                   'conn_id': 1245,
-                                                                   'details': 'from IP=192.168.1.1:56822 (IP=0.0.0.0:389)',
-                                                                   'fd_id': 34,
-                                                                   'server': 'foo.example.com',
-                                                                   'time': 'now',
-                                                                   'tls': False,
-                                                                   'verb': 'ACCEPT'}
+                                     'tls': False,
+                                     'user': ''}
