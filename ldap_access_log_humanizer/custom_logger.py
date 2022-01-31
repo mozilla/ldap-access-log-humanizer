@@ -5,7 +5,6 @@ import requests
 import socket
 import sys
 import syslog
-import requests
 
 
 class CustomLogger:
@@ -45,9 +44,9 @@ class CustomLogger:
             print(data)
         else:
             if self.output_stdout:
-                print(str(data))
+                print(json.dumps(data))
             if self.output_stderr:
-                sys.stderr.write(str(data) + "\n")
+                sys.stderr.write(json.dumps(data) + "\n")
             if self.output_file:
                 if self.output_file_name is None or self.output_file_name == "":
                     raise Exception('log_type of "file" was chosen, but no log file specified')
@@ -58,11 +57,11 @@ class CustomLogger:
                     append_write = 'w'  # make a new file if not
 
                 with open(self.output_file_name, append_write) as f:
-                    f.write(str(data) + '\n')
+                    f.write(json.dumps(data) + '\n')
             if self.output_syslog:
                 facility = self.syslog_map[self.syslog_facility]
                 syslog.openlog(facility=facility)
-                syslog.syslog(str(data))
+                syslog.syslog(json.dumps(data))
             if self.output_mozdef:
                 headers = {
                     'Content-type': 'application/json',
