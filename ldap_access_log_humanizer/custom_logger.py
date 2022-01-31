@@ -12,12 +12,10 @@ class CustomLogger:
     # many different output types and it can handle them simultaneously
     def __init__(self, args_dict):
         self.output_syslog = args_dict['output_syslog']
-        self.output_mozdef = args_dict['output_mozdef']
         self.output_stdout = args_dict['output_stdout']
         self.output_stderr = args_dict['output_stderr']
         self.output_file = args_dict['output_file']
         self.output_file_name = args_dict['output_file_name']
-        self.mozdef_url = args_dict['mozdef_url']
         self.syslog_facility = args_dict['syslog_facility']
         self.syslog_map = {
             'LOG_KERN': 0,
@@ -62,18 +60,3 @@ class CustomLogger:
                 facility = self.syslog_map[self.syslog_facility]
                 syslog.openlog(facility=facility)
                 syslog.syslog(json.dumps(data))
-            if self.output_mozdef:
-                headers = {
-                    'Content-type': 'application/json',
-                }
-                msg = {}
-                msg['timestamp'] = datetime.datetime.utcnow().isoformat()
-                msg['hostname'] = socket.getfqdn()
-                msg['category'] = 'ldap'
-                msg['tags'] = ['ldap']
-                msg['summary'] = 'LDAP-Humanizer:{}:{}'.format(data['conn_id'], data['client'])
-                msg['details'] = data
-
-                resp = requests.post(self.mozdef_url, headers=headers,  data=json.dumps(msg))
-                if not resp.ok:
-                    print("Failed to post to mozdef")

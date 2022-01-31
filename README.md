@@ -60,4 +60,4 @@ For production usage, use the humanizer_settings.json file to pass the configura
 ___________________________
 The humanizer can read logs via stdin, a specified file or from syslog over UDP.
 
-The humanizer can output humanized logs to stdout, stderr, a specified file, forward to your MozDef server's events collector or forward to another syslog server. It can do any combination of output types, so you can have one instance write a local file, dump to stdout, stderr and forward the logs to syslog and MozDef, or any combination of these.
+The humanizer can output humanized logs to stdout, stderr, a specified file, or forward to another syslog server. It can do any combination of output types, so you can have one instance write a local file, dump to stdout, stderr, or any combination of these.

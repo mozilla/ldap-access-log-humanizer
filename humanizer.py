@@ -22,12 +22,10 @@ def main(prog_args=None):
     parser.add_argument("--port", help="port to listen on")
     parser.add_argument("--output_syslog", action="store_true", help="output to syslog")
     parser.add_argument("--syslog_facility", help="syslog facility to log to")
-    parser.add_argument("--output_mozdef", action="store_true", help="output to mozdef")
     parser.add_argument("--output_stdout", action="store_true", help="output to stdout")
     parser.add_argument("--output_stderr", action="store_true", help="output to stderr")
     parser.add_argument("--output_file", action="store_true", help="output to file")
     parser.add_argument("--output_file_name", help="output file path")
-    parser.add_argument("--mozdef_url", default="https://127.0.0.1:8443/events", help="mozdef url")
     parser.add_argument("--verbose", action="store_true", help="log parsing errors")
     parser.add_argument("--config", help="config file path")
     args = parser.parse_args()
@@ -44,7 +42,7 @@ def main(prog_args=None):
 
     if args.output_file_name:
         args_dict['output_file'] = True
-    elif not args.output_mozdef or args.output_syslog or args.output_stderr or args.output_file:
+    elif args.output_syslog or args.output_stderr or args.output_file:
         args_dict['output_stdout'] = True
 
     if args.config:
